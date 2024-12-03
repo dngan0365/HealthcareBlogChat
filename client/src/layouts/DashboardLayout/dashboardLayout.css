@@ -1,0 +1,61 @@
+.dashboardLayout {
+  background-color: #fff;
+  display: flex;
+  height: calc(100vh - 64px); /* Default height for medium screens */
+
+  /* Menu section */
+  .menu {
+    flex: 1;
+    height: 100%;
+    background-color: #ffffff; /* Optional, for clarity */
+    transition: width 0.3s ease; /* Smooth transition for opening/closing */
+    overflow: hidden; /* Hide overflow when the menu is closed */
+  }
+
+  /* Content section */
+  .content {
+    flex: 4;
+    transition: padding-left 0.3s ease; /* Smooth padding change */
+    padding-left: 16px; /* Default padding when menu is open */
+  }
+}
+.menu {
+  flex: 1;
+  height: 100%;
+  background-color: #ffffff;
+}
+
+
+.openMenuButton {
+  z-index: 50;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+}
+
+.closeMenuButton {
+  width: 100%;
+  text-align: left;
+  padding: 10px;
+}
+
+/* Adjust height for smaller screens */
+@media (max-width: 768px) {
+  .dashboardLayout {
+    height: calc(100vh - 48px); /* Reduce the height when the header is smaller */
+    flex-direction: column; /* Stack menu and content */
+  }
+}
+
+/* Adjust height for larger screens */
+@media (min-width: 1200px) {
+  .dashboardLayout {
+    height: calc(100vh - 64px); /* Maintain space for the header on large screens */
+  }
+}
+
+@media (min-width: 1000px) {
+  .dashboardLayout {
+    height: calc(100vh - 64px); /* Same as above */
+  }
+}

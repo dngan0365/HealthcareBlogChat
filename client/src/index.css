@@ -1,0 +1,31 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    margin: 0; /* Remove any default margin */
+    padding: 0; /* Remove any default padding */
+    min-height: 100vh; /* Ensure it spans the full viewport height */
+    /* background-color: #E8F5E9; Your background color */
+    /* overflow-x: hidden; */
+    font-family: "Montserrat", sans-serif;
+}
+*{
+    box-sizing: border-box; /* Ensure consistent box model behavior */
+}
+.animatedButton{
+    animation-duration: 10000ms;
+}
+  
+.ql-container{
+    border: none !important;
+}
+.ql-toolbar{
+    border: none !important;
+}
+.ql-editor{
+    border: none !important;
+}
+
+  
