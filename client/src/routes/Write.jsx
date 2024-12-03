@@ -72,7 +72,7 @@ const Write = () => {
   };
 
   return (
-    <div className="px-4 mt-10 md:px-6 lg:px-16 xl:px-30 2xl:px-62 h-[calc(100vh-64px)] md:h-[calc(100vh-80px)] flex flex-col gap-6">
+    <div className="px-4 mt-10 md:px-6 lg:px-16 xl:px-30 2xl:px-62 min-h-[calc(100vh-62px)] md:min-h-[calc(100vh-80px)] flex flex-col gap-6">
       <h1 className="text-[#415042] text-2xl md:text-4xl lg:text-5xl font-bold">Create a New Post</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-6 flex-1 mb-6">
       
