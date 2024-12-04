@@ -1,17 +1,16 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import React, { useState } from "react";
+import React, { Children, createContext, useContext, useState } from "react";
 import "./dashboardLayout.css";
 import { useUser } from "@clerk/clerk-react";
 import { useEffect } from "react";
 import ChatList from "../../components/chatList/ChatList";
+import { MenuProvider, useMenu } from "../../components/MenuContext";
 
 const DashboardLayout = () => {
   const { isLoaded, isSignedIn } = useUser();
-  const [isMenuOpen, setIsMenuOpen] = useState(true);
+  const { isMenuOpen, toggleMenu } = useMenu();
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  const handleSearch = () => {};
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,31 +23,25 @@ const DashboardLayout = () => {
 
   return (
     <div className="dashboardLayout">
-  {
-    isMenuOpen && (
+      {isMenuOpen && (
+        <div
+          className={`menu shadow-md transition-all duration-1000 ease-in-out ml-${
+            isMenuOpen ? "64" : "16"
+          }`}
+        >
+          <ChatList />
+        </div>
+      )}
+
       <div
-        className={`menu transition-all duration-300 ${isMenuOpen ? "w-64" : "w-0"}`}
+        className={`content flex-1 ${
+          isMenuOpen ? "pl-4" : "pl-0"
+        } transition-all duration-300`}
       >
-        <ChatList isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
+        <Outlet />
       </div>
-    )
-  }
-
-  <div className={`content flex-1 ${isMenuOpen ? "pl-4" : "pl-0"} transition-all duration-300`}>
-    {!isMenuOpen && (
-      <button
-        className="openMenuButton bg-blue-500 text-white p-2 rounded fixed top-4 left-4"
-        onClick={toggleMenu}
-      >
-        Open Menu
-      </button>
-    )}
-    <Outlet />
-  </div>
-</div>
-
-  )
-  
+    </div>
+  );
 };
 
 export default DashboardLayout;

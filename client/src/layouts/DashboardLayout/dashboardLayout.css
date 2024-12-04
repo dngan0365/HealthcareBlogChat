@@ -3,6 +3,8 @@
   display: flex;
   height: calc(100vh - 64px); /* Default height for medium screens */
 
+  
+
   /* Menu section */
   .menu {
     flex: 1;

@@ -5,6 +5,58 @@
   height: 100%; /* Ensure it takes the full height */
   border-radius: 0 10px 10px 0;
 
+  .icon{
+    display: flex;
+    justify-content: space-between;
+    
+    .close{
+      display: inline-block;
+      margin: 20px;
+      border-radius: 20px;
+      background-color: transparent;
+      transition: background-color 0.3s ease;
+      
+      .closeMenuButton {
+        background-image: url('/sidebar.svg'); /* Đường dẫn tới file SVG */
+        background-repeat: no-repeat;
+        background-size: contain; /* Đảm bảo biểu tượng phù hợp với kích thước */
+        margin: 10px;
+        border: none; 
+        width: 30px;
+        height: 30px;
+        border-radius: 10px;
+        cursor: pointer;
+        opacity: 0.6;
+        padding: 15px;
+        background-color: transparent;
+      }
+  
+      .search{
+        background-image: url('/search.svg'); /* Đường dẫn tới file SVG */
+        background-repeat: no-repeat;
+        background-size: contain; /* Đảm bảo biểu tượng phù hợp với kích thước */
+        margin: 10px;
+        border: none; 
+        width: 30px;
+        height: 30px;
+        border-radius: 10px;
+        cursor: pointer;
+        opacity: 2.0;
+        padding: 15px;
+        background-color: transparent;
+      }
+      
+    }
+  }
+  
+  .close:hover{
+    opacity: 0.8;
+    background-color: rgba(0, 0, 0, 0.1); /* Thay đổi alpha để đậm hơn */
+
+  }
+  
+  
+
   hr {
     border: none;
     height: 2px;
