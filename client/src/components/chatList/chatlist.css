@@ -11,7 +11,7 @@
     
     .close{
       display: inline-block;
-      margin: 20px;
+      margin: 10px;
       border-radius: 20px;
       background-color: transparent;
       transition: background-color 0.3s ease;
@@ -131,4 +131,23 @@
       }
     }
   }
+}
+.group {
+  margin-bottom: 1rem;
+}
+
+.group-title {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.list a {
+  display: block;
+  padding: 0.5rem;
+  text-decoration: none;
+  color: #333;
+}
+
+.list a:hover {
+  background-color: rgba(0, 0, 0, 0.1);
 }
