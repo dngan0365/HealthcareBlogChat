@@ -23,33 +23,36 @@ const ChatList = () => {
   // Safely process `data`
   const groupChatsByDate = (chats) => {
     if (!Array.isArray(chats) || chats.length === 0) {
-      return {}; // Return an empty object if `chats` is not an array or is empty
+      return {}; // Trả về đối tượng rỗng nếu không có chat
     }
 
     const groupedChats = {};
     const today = new Date();
+    const sevenDaysAgo = new Date(today);
+    const thirtyDaysAgo = new Date(today);
+
+    sevenDaysAgo.setDate(today.getDate() - 7); // Ngày 7 ngày trước
+    thirtyDaysAgo.setDate(today.getDate() - 30); // Ngày 30 ngày trước
 
     chats.forEach((chat) => {
       const chatDate = new Date(chat.createdAt);
       if (isNaN(chatDate)) {
         console.warn(`Invalid date for chat: ${chat._id}, skipping.`);
-        return; // Skip invalid dates
+        return; // Bỏ qua nếu ngày không hợp lệ
       }
 
-      const isToday = chatDate.toDateString() === today.toDateString();
-      const isYesterday =
-        chatDate.toDateString() ===
-        new Date(today.setDate(today.getDate() - 1)).toDateString();
+      let groupKey;
 
-      const groupKey = isToday
-        ? "Today"
-        : isYesterday
-        ? "Yesterday"
-        : chatDate.toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          });
+      if (chatDate >= sevenDaysAgo) {
+        groupKey = "Last 7 Days";
+      } else if (chatDate >= thirtyDaysAgo) {
+        groupKey = "Last 30 Days";
+      } else {
+        groupKey = chatDate.toLocaleDateString("en-US", {
+          month: "short",
+          year: "numeric",
+        }); // Theo tháng nếu hơn 30 ngày
+      }
 
       if (!groupedChats[groupKey]) {
         groupedChats[groupKey] = [];
@@ -85,8 +88,22 @@ const ChatList = () => {
         {/* Menu content */}
         <div className="flex flex-col px-1">
           <span className="title">DASHBOARD</span>
-          <Link to="/dashboard">Create a new Chat</Link>
-          <Link to="/">Explore MedComp Blog</Link>
+          <div className="flex items-center">
+            <img
+              src="/new_chat.svg"
+              alt="Dashboard Icon"
+              className="w-6 h-6 inline-block mr-2"
+            />
+            <Link to="/dashboard">Create a new Chat</Link>
+          </div>
+          <div className="flex items-center">
+            <img
+              src="/explore.svg"
+              alt="Dashboard Icon"
+              className="w-6 h-6 inline-block mr-2"
+            />
+            <Link to="/">Explore MedComp Blog</Link>
+          </div>
           <hr />
           <span className="title">ALL CHATS</span>
           <div className="list">
