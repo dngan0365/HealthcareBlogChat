@@ -51,15 +51,15 @@ const DashboardPage = () => {
         </div>
         <div className="options">
           <div className="option">
-            <img src="/chat.png" alt="" />
+            <img src="/symptom_checker.webp" alt="" />
             <span>Symptom Checker</span>
           </div>
           <div className="option">
-            <img src="/image.png" alt="" />
+            <img src="/health_monitor1.png" alt="" />
             <span>Health Monitoring</span>
           </div>
           <div className="option">
-            <img src="/code.png" alt="" />
+            <img src="/medicine2.avif" alt="" />
             <span>Medication Management</span>
           </div>
         </div>
