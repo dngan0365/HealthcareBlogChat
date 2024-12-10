@@ -26,6 +26,7 @@ import DashboardPage from "./routes/dashboardPage/DashboardPage.jsx";
 import DashboardLayout from "./layouts/DashboardLayout/DashboardLayout.jsx";
 import ChatPage from "./routes/chatPage/ChatPage.jsx";
 import SchedulePage from "./routes/Schedule/SchedulePage.jsx";
+import ProfilePage from "./routes/profile/Profile.jsx"
 import { registerLicense } from "@syncfusion/ej2-base";
 import { MenuProvider } from "./components/MenuContext.jsx";
 
@@ -75,6 +76,10 @@ const router = createBrowserRouter([
       {
         path: "/schedule",
         element: <SchedulePage />,
+      },
+      {
+        path: "/profile",
+        element: <ProfilePage />,
       },
       {
         element: <DashboardLayout />,
