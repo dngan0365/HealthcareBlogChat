@@ -20,7 +20,12 @@ const ChatList = () => {
       }),
   });
 
+  // Safely process `data`
   const groupChatsByDate = (chats) => {
+    if (!Array.isArray(chats) || chats.length === 0) {
+      return {}; // Return an empty object if `chats` is not an array or is empty
+    }
+
     const groupedChats = {};
     const today = new Date();
 
@@ -57,31 +62,23 @@ const ChatList = () => {
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Something went wrong!</div>;
-  if (!data || data.length === 0) return <div>No chats available.</div>;
 
-  // Sort chats by most recent date first
-  const sortedChats = [...data].sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  );
+  const sortedChats = Array.isArray(data)
+    ? [...data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    : []; // Ensure `sortedChats` is an array
 
-  // Group chats by date
   const groupedChats = groupChatsByDate(sortedChats);
-
-  const handleSearch = ()=>{
-
-  }
 
   return (
     <div className="chatList">
       <div>
         {/* Button to close the menu */}
-        {/* Button to close the menu */}
         <div className="icon">
           <span className="close" onClick={toggleMenu}>
             <button className="closeMenuButton" onClick={toggleMenu}></button>
           </span>
-          <span className="close" onClick={handleSearch}>
-            <button className="search" onClick={handleSearch}></button>
+          <span className="close">
+            <button className="search"></button>
           </span>
         </div>
 
@@ -93,20 +90,28 @@ const ChatList = () => {
           <hr />
           <span className="title">ALL CHATS</span>
           <div className="list">
-            {Object.keys(groupedChats).map((dateKey) => (
-              <div key={dateKey} className="group">
-                <div className="group-title">{dateKey}</div>
-                {groupedChats[dateKey].map((chat) => (
-                  <Link
-                    className="hover:bg-gray-600 transition duration-200"
-                    to={`/dashboard/chats/${chat._id}`}
-                    key={chat._id}
-                  >
-                    {chat.title}
-                  </Link>
-                ))}
+            {Object.keys(groupedChats).length > 0 ? (
+              Object.keys(groupedChats).map((dateKey) => (
+                <div key={dateKey} className="group">
+                  <div className="group-title font-bold text-gray-700 my-2">
+                    {dateKey}
+                  </div>
+                  {groupedChats[dateKey].map((chat) => (
+                    <Link
+                      className="block py-1 hover:bg-gray-200 rounded-md transition duration-200"
+                      to={`/dashboard/chats/${chat._id}`}
+                      key={chat._id}
+                    >
+                      {chat.title}
+                    </Link>
+                  ))}
+                </div>
+              ))
+            ) : (
+              <div className="no-chats text-gray-500 text-center py-4">
+                No chats available.
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>
