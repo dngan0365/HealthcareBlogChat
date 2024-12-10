@@ -11,7 +11,11 @@
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.17.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@google/generative-ai": "^0.21.0",
+    "@mui/icons-material": "^6.1.10",
+    "@mui/material": "^6.1.10",
     "@syncfusion/ej2-react-buttons": "^27.2.4",
     "@syncfusion/ej2-react-inputs": "^27.2.4",
     "@syncfusion/ej2-react-schedule": "^27.2.5",
@@ -30,8 +34,6 @@
   "devDependencies": {
     "@eslint/js": "^9.13.0",
     "@tailwindcss/line-clamp": "^0.4.4",
-    "@types/react": "npm:types-react@rc",
-    "@types/react-dom": "npm:types-react-dom@rc",
     "@vitejs/plugin-react": "^4.3.3",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.13.0",

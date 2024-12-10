@@ -30,8 +30,9 @@ import { registerLicense } from "@syncfusion/ej2-base";
 import { MenuProvider } from "./components/MenuContext.jsx";
 
 // Register the license key
-const schedule_key = import.meta.env.LICENSE_KEY_SYNCFUSION;
-console.log(schedule_key);
+// const schedule_key = import.meta.env.LICENSE_KEY_SYNCFUSION;
+const schedule_key ="Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWH1eeXVURGlcWUF2V0I="
+// console.log(schedule_key);
 registerLicense(schedule_key);
 
 const queryClient = new QueryClient();
