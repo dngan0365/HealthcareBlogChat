@@ -1,0 +1,6 @@
+langchain
+weaviate-client
+openai
+fastapi
+uvicorn
+langchain_community

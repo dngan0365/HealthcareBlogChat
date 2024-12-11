@@ -97,12 +97,19 @@ const Navbar = () => {
               Chat
             </Link>
             <Link
-              to="/"
+              to="/schedule"
               onClick={() => setOpen(false)}
               className="text-[#415042]"
             >
               Schedule
             </Link>
+            <a
+            href="/profile"
+            onClick={() => setOpen(false)}
+            className="text-[#415042]"
+          >
+            Profile
+          </a>
             <SignedOut>
               <Link to="/login" onClick={() => setOpen(false)}>
                 <button
@@ -125,7 +132,7 @@ const Navbar = () => {
           <Link to="/write">Write</Link>
           <Link to="/dashboard">Chat</Link>
           <Link to="/schedule">Schedule</Link>
-          <Link to="/">About</Link>
+          <a href="/profile">Profile</a> {/* Fixed here */}
           <SignedOut>
             <Link to="/login">
               <button

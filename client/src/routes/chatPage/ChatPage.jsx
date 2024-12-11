@@ -7,9 +7,9 @@ import { IKImage } from "imagekitio-react";
 
 const ChatPage = () => {
   const path = useLocation().pathname;
-  console.log("path "+path );
   const chatId = path.split("/").pop();
   console.log("chatId" + chatId);
+  
   const { isPending, error, data } = useQuery({
     queryKey: ["chat", chatId],
     queryFn: () =>
@@ -18,7 +18,7 @@ const ChatPage = () => {
       }).then((res) => res.json()),
   });
 
-  console.log(data);
+  // console.log(data.history);
 
   return (
     <div className="chatPage">
