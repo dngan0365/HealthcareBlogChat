@@ -4,3 +4,10 @@ openai
 fastapi
 uvicorn
 langchain_community
+
+
+odmantic
+motor
+python-dotenv
+requests
+python-multipart
