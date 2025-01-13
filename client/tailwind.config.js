@@ -16,6 +16,6 @@ export default {
     },
     plugins: [
       // eslint-disable-next-line no-undef
-      require('@tailwindcss/line-clamp'),  // Make sure the plugin is installed
+      //require('@tailwindcss/line-clamp'),  // Make sure the plugin is installed
     ],
   };

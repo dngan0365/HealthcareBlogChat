@@ -1,11 +1,12 @@
 import Chat from "../models/chat.model.js";
 import UserChats from "../models/userChats.model.js";
 import path from "path";
+import axios from "axios";
 
 // [POST] create a new chat
 export const createNewChat = async (req, res) => {
   const userId = req.auth?.userId;
-  const { text } = req.body;
+  const { text, answer } = req.body;
 
   if (!userId) {
     return res.status(400).send("User authentication is required.");
@@ -19,7 +20,10 @@ export const createNewChat = async (req, res) => {
     // Create a new chat
     const newChat = new Chat({
       user: userId,
-      history: [{ role: "user", parts: [{ text }] }],
+      history: [
+        { role: "user", parts: [{ text: text }] },
+        { role: "model", parts: [{ text: answer }] }
+      ],
     });
 
     const savedChat = await newChat.save();
