@@ -147,6 +147,7 @@ export const deletePost = async (req, res) => {
 };
 
 export const featurePost = async (req, res) => {
+  console.log(req.auth);
   const clerkUserId = req.auth.userId;
   const postId = req.body.postId;
 
