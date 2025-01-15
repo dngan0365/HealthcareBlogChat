@@ -2,9 +2,11 @@ import { Link } from "react-router-dom";
 import "./chatList.css";
 import { useQuery } from "@tanstack/react-query";
 import { useMenu } from "../MenuContext";
+import { useState } from "react";
 
 const ChatList = () => {
   const { isMenuOpen, toggleMenu } = useMenu();
+  const [selectedChatId, setSelectedChatId] = useState(null);
 
   // Fetch user chats using React Query
   const { isLoading, error, data } = useQuery({
@@ -115,9 +117,11 @@ const ChatList = () => {
                   </div>
                   {groupedChats[dateKey].map((chat) => (
                     <Link
-                      className="block py-1 hover:bg-gray-200 rounded-md transition duration-200"
+                      className={`block py-1 hover:bg-gray-200 rounded-md transition duration-200
+                        ${chat._id === selectedChatId ? "bg-[rgba(0,0,0,0.15)]" : ""}`}
                       to={`/dashboard/chats/${chat._id}`}
                       key={chat._id}
+                      onClick={() => setSelectedChatId(chat._id)}
                     >
                       {chat.title}
                     </Link>
