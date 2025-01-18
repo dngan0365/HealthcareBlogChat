@@ -85,13 +85,13 @@ async def generate_gpt_response(prompt: str) -> AsyncGenerator[str, None]:
         response = clientOpenai.chat.completions.create(
             model="gpt-4",
             messages=[
-                {"role": "system", "content": "You are an assistant that generates concise and accurate responses. The sentence is not above 40 words."},
+                {"role": "system", "content": "You are an assistant that generates concise and accurate responses about health and wellness. The sentence is not above 15 words."},
                 {"role": "user", "content": prompt}],
             temperature=0.7,
         )
         print(response)
         
-        return response.choices[0].message.content.strip()
+        return str(response.choices[0].message.content.strip())
     except Exception as e:
         # Log and return an error message if an exception occurs
         print(f"Error during GPT generation: {str(e)}")
@@ -138,7 +138,7 @@ async def create_chat_stream(request: Request):
     user_chats = user_chats_collection.find_one({"user": user_id})
     chat_entry = {
         "_id": str(result.inserted_id),
-        "title": title,
+        "title":  str(title).strip('"'),
         "created_at": datetime.utcnow(),
     }
     if not user_chats:
