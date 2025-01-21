@@ -1,3 +1,5 @@
+from datetime import date, time
+
 from llama_index.core.tools import FunctionTool
 from llama_index.core.vector_stores import (
     VectorStoreInfo,
@@ -10,108 +12,98 @@ from llama_index.core.vector_stores import (
 from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.query_engine import RetrieverQueryEngine
 import weaviate
+from llama_index.llms.openai import OpenAI
+from llama_index.core.retrievers import VectorIndexAutoRetriever
+from llama_index.core import Settings
+import weaviate
 
+from fastapi import Depends
+from llama_index.core import Settings
+import csv
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
 from llama_index.vector_stores.weaviate import WeaviateVectorStore
 from IPython.display import Markdown, display
-
+from fastapi import Depends
 from typing import List, Tuple, Any
 from pydantic import BaseModel, Field
+import datetime
+import yaml
+from core.ai.database.chat_history_service import get_schedule
+import os
+# core/ai/tools/tools.py
+from llm_integration.huggingface_client import get_embed_model
+from llm_integration.weaviate_client import get_weaviate_client
+from llm_integration.openai_client import get_llmRetriever
+from llama_index.core.response.notebook_utils import display_source_node
+import csv
+
+
+Settings.embed_model = get_embed_model()
 
 # hardcode top k for now
 top_k = 5
 
+client = get_weaviate_client()
 
-# define vector store index
-cluster_url = "https://wly3tkm2tkewvzycwne6fa.c0.asia-southeast1.gcp.weaviate.cloud"
-api_key = "ruGxCkA145k9qWxpoycebKHeLGxc9vtCnLWZ"
-
-client = weaviate.connect_to_wcs(
-    cluster_url=cluster_url,
-    auth_credentials=weaviate.auth.AuthApiKey(api_key),
+# define vector store info describing schema of vector store
+vector_store_co_the_info = VectorStoreInfo(
+    content_info="Chứa những thông tin về cơ thể của người, bao gồm cân nặng, chiều cao, BMI, chỉ số máu và chế độ ăn uống, tập thể dục hợp lý",
+    metadata_info=[
+        MetadataInfo(
+            name="title",
+            type="str",
+            description=(
+                "Tiêu đề của tài liệu chứa thông tin, có thể là cân nặng, chiều cao, BMI, máu hoặc chế độ ăn uống, tập thể dục"
+            ),
+        ),
+        MetadataInfo(
+            name="document_title",
+            type="str",
+            description=(
+                "Chủ đề của thông tin"
+            ),
+        ),
+        MetadataInfo(
+            name="questions_this_excerpt_can_answer",
+            type="str",
+            description=(
+                "Câu hỏi tham khảo mà đoạn văn này có thể trả lời"
+            ),
+        ),
+        MetadataInfo(
+            name="date",
+            type="str",
+            description=(
+                "Ngày tháng năm thông tin được cập nhật"
+            ),
+        ),
+        MetadataInfo(
+            name="source",
+            type="str",
+            description=(
+                "Nguồn thông tin có thể là một đường dẫn hoặc tên trang web"
+            ),
+        ),
+    ],
 )
 
-# define pydantic model for auto-retrieval function
-class AutoRetrieveModel(BaseModel):
-    query: str = Field(..., description="natural language query string")
-    filter_key_list: List[str] = Field(
-        ..., description="List of metadata filter field names"
-    )
-    filter_value_list: List[Any] = Field(
-        ...,
-        description=(
-            "List of metadata filter field values (corresponding to names"
-            " specified in filter_key_list)"
-        ),
-    )
-    filter_operator_list: List[str] = Field(
-        ...,
-        description=(
-            "Metadata filters conditions (could be one of <, <=, >, >=, ==, !=)"
-        ),
-    )
-    filter_condition: str = Field(
-        ...,
-        description=("Metadata filters condition values (could be AND or OR)"),
-    )
 
+def write_to_next_empty_row(data, file_name="tools_log.csv"):
+    with open(file_name, mode="a", newline="", encoding="utf-16") as file:
+        writer = csv.writer(file)
+        writer.writerow(data)  # Append the row to the end of the file
 
-description = f"""\
-Use this tool to look up biographical information about celebrities.
-The vector database schema is given below:
-{vector_store_info.json()}
-"""
-
-def RetrieveLifeBMIBloodTool(
-    query: str,
-    filter_key_list: List[str],
-    filter_value_list: List[any],
-    filter_operator_list: List[str],
-    filter_condition: str,
-):
+def RetrieveLifeBMIBloodTool(query: str = None, embed_model = Depends(get_embed_model)) :
     """
-    Hàm truy vấn thông tin về lịch sử BMI và máu
+    Hàm truy vấn thông tin về lịch sử BMI và máu, lối sống khỏe mạnh
     """
     # Define the vector store
 
     vector_store = WeaviateVectorStore(
-        weaviate_client=client, index_name="Chi_so_co_the_BMI"
+        weaviate_client=client, index_name="Cac_chi_so_co_the_BMI", text_key="content"
     )
 
     loaded_index = VectorStoreIndex.from_vector_store(vector_store)
-    
-    # define vector store info describing schema of vector store
-    vector_store_info = VectorStoreInfo(
-        content_info="brief biography of celebrities",
-        metadata_info=[
-            MetadataInfo(
-                name="category",
-                type="str",
-                description=(
-                    "Category of the celebrity, one of [Sports, Entertainment,"
-                    " Business, Music]"
-                ),
-            ),
-            MetadataInfo(
-                name="country",
-                type="str",
-                description=(
-                    "Country of the celebrity, one of [United States, Barbados,"
-                    " Portugal]"
-                ),
-            ),
-            MetadataInfo(
-                name="gender",
-                type="str",
-                description=("Gender of the celebrity, one of [male, female]"),
-            ),
-            MetadataInfo(
-                name="born",
-                type="int",
-                description=("Born year of the celebrity, could be any integer"),
-            ),
-        ],
-    )
     
     """Auto retrieval function.
 
@@ -120,20 +112,264 @@ def RetrieveLifeBMIBloodTool(
     """
     query = query or "Query"
 
-    metadata_filters = [
-        MetadataFilter(key=k, value=v, operator=op)
-        for k, v, op in zip(
-            filter_key_list, filter_value_list, filter_operator_list
-        )
-    ]
-    retriever = VectorIndexRetriever(
-        index,
-        filters=MetadataFilters(
-            filters=metadata_filters, condition=filter_condition
-        ),
-        top_k=top_k,
+    llm = get_llmRetriever()
+    
+    retriever = VectorIndexAutoRetriever(
+        loaded_index,
+        vector_store_info=vector_store_co_the_info,
+        llm = llm,
+        vector_store_query_mode="hybrid", 
+        alpha=0.5,
+        similarity_top_k = top_k, 
+        enable_reranking=True,
     )
-    query_engine = RetrieverQueryEngine.from_args(retriever)
 
-    response = query_engine.query(query)
-    return str(response)
+    response = retriever.retrieve(query)
+        
+    # Format response as a string with text, source, and date
+    formatted_strings = []
+    
+    for i, item in enumerate(response):
+        text = item.text
+        source = item.metadata.get("source", "Không rõ nguồn")  # Lấy source từ metadata
+        date = item.metadata.get("date", "Không rõ ngày")       # Lấy date từ metadata
+        
+        # Định dạng chuỗi
+        formatted_string = f"{i + 1}. {text} (Nguồn: {source}, Ngày cập nhật: {date})"
+        formatted_strings.append(formatted_string)
+
+    # Kết quả là danh sách các chuỗi định dạng
+    result = "\n".join(formatted_strings)
+    
+    write_to_next_empty_row(["RetrieveLifeBloodTool", result])
+    return result
+
+def RetrieveQuestionAnswer(query: str = None, embed_model = Depends(get_embed_model)) :
+    """
+    Hàm truy vấn các câu hỏi đã được trả lời trước đó
+    """
+    # Define the vector store
+
+    vector_store = WeaviateVectorStore(
+        weaviate_client=client, index_name="Question_Answer", text_key="content"
+    )
+
+    loaded_index = VectorStoreIndex.from_vector_store(vector_store)
+    
+    """Auto retrieval function.
+
+    Performs auto-retrieval from a vector database, and then applies a set of filters.
+
+    """
+    query = query or "Query"
+
+    llm = get_llmRetriever()
+    
+    retriever = VectorIndexAutoRetriever(
+        loaded_index,
+        vector_store_info=vector_store_co_the_info,
+        llm = llm,
+        vector_store_query_mode="hybrid", 
+        alpha=0.5,
+        similarity_top_k = top_k, 
+        enable_reranking=True,
+    )
+
+    response = retriever.retrieve(query)
+    
+    
+    # Format response as a string with text, source, and date
+    formatted_strings = []
+
+    for i, item in enumerate(response):
+        text = item.text
+        source = item.metadata.get("source", "Không rõ nguồn")  # Lấy source từ metadata
+        date = item.metadata.get("date", "Không rõ ngày")       # Lấy date từ metadata
+        
+        # Định dạng chuỗi
+        formatted_string = f"{i + 1}. {text} (Nguồn: {source}, Ngày cập nhật: {date})"
+        formatted_strings.append(formatted_string)
+
+    # Kết quả là danh sách các chuỗi định dạng
+    result = "\n".join(formatted_strings)
+    
+    write_to_next_empty_row(["RetrieveQuestionAnswer", result])
+    return result
+
+def RetrieveBenhNoiKhoa(query: str = None, embed_model = Depends(get_embed_model)) :
+    """
+    Truy vấn thông tin về bệnh nội khoa gồm triệu chứng, chẩn đoán và phòng ngừa
+    """
+    # Define the vector store
+
+    vector_store = WeaviateVectorStore(
+        weaviate_client=client, index_name="Benh_noi_khoa", text_key="content"
+    )
+
+    loaded_index = VectorStoreIndex.from_vector_store(vector_store)
+    
+    """Auto retrieval function.
+
+    Performs auto-retrieval from a vector database, and then applies a set of filters.
+
+    """
+    query = query or "Query"
+
+    llm = get_llmRetriever()
+    
+    retriever = VectorIndexAutoRetriever(
+        loaded_index,
+        vector_store_info=vector_store_co_the_info,
+        llm = llm,
+        vector_store_query_mode="hybrid", 
+        alpha=0.5,
+        similarity_top_k = top_k, 
+        enable_reranking=True,
+    )
+
+    response = retriever.retrieve(query)
+
+        # Format response as a string with text, source, and date
+    formatted_strings = []
+    
+    for i, item in enumerate(response):
+        text = item.text
+        source = item.metadata.get("source", "Không rõ nguồn")  # Lấy source từ metadata
+        date = item.metadata.get("date", "Không rõ ngày")       # Lấy date từ metadata
+        
+        # Định dạng chuỗi
+        formatted_string = f"{i + 1}. {text} (Nguồn: {source}, Ngày cập nhật: {date})"
+        formatted_strings.append(formatted_string)
+
+    # Kết quả là danh sách các chuỗi định dạng
+    result = "\n".join(formatted_strings)
+    
+    write_to_next_empty_row(["RetrieveLifeBloodTool", result])
+    
+    return result
+
+def RetrieveTamLy(query: str = None, embed_model = Depends(get_embed_model)) :
+    """
+    Hàm truy vấn các câu hỏi về tâm lý học đường
+    """
+    # Define the vector store
+
+    vector_store = WeaviateVectorStore(
+        weaviate_client=client, index_name="Tam_li_hoc_duong", text_key="content"
+    )
+
+    loaded_index = VectorStoreIndex.from_vector_store(vector_store)
+    
+    """Auto retrieval function.
+
+    Performs auto-retrieval from a vector database, and then applies a set of filters.
+
+    """
+    query = query or "Query"
+
+    llm = get_llmRetriever()
+    
+    retriever = VectorIndexAutoRetriever(
+        loaded_index,
+        vector_store_info=vector_store_co_the_info,
+        llm = llm,
+        vector_store_query_mode="hybrid", 
+        alpha=0.5,
+        similarity_top_k = top_k, 
+        enable_reranking=True,
+    )
+
+    response = retriever.retrieve(query)
+    
+    
+    # Format response as a string with text, source, and date
+    formatted_strings = []
+    
+    for i, item in enumerate(response):
+        text = item.text
+        source = item.metadata.get("source", "Không rõ nguồn")  # Lấy source từ metadata
+        date = item.metadata.get("date", "Không rõ ngày")       # Lấy date từ metadata
+        
+        # Định dạng chuỗi
+        formatted_string = f"{i + 1}. {text} (Nguồn: {source}, Ngày cập nhật: {date})"
+        formatted_strings.append(formatted_string)
+
+    # Kết quả là danh sách các chuỗi định dạng
+    result = "\n".join(formatted_strings)
+    
+    write_to_next_empty_row(["RetrieveTamLy", result])
+    
+    return result
+
+def RetrieveDinhDuong(query: str = None, embed_model = Depends(get_embed_model)) :
+    """
+    Hàm truy vấn các câu hỏi về dinh dưỡng, thức ăn
+    """
+    # Define the vector store
+
+    vector_store = WeaviateVectorStore(
+        weaviate_client=client, index_name="Dinh_duong", text_key="content"
+    )
+
+    loaded_index = VectorStoreIndex.from_vector_store(vector_store)
+    
+    """Auto retrieval function.
+
+    Performs auto-retrieval from a vector database, and then applies a set of filters.
+
+    """
+    query = query or "Query"
+
+    llm = get_llmRetriever()
+    
+    retriever = VectorIndexAutoRetriever(
+        loaded_index,
+        vector_store_info=vector_store_co_the_info,
+        llm = llm,
+        vector_store_query_mode="hybrid", 
+        alpha=0.5,
+        similarity_top_k = top_k, 
+        enable_reranking=True,
+    )
+
+    response = retriever.retrieve(query)
+    
+    
+    # Format response as a string with text, source, and date
+    formatted_strings = []
+    
+    for i, item in enumerate(response):
+        text = item.text
+        source = item.metadata.get("source", "Không rõ nguồn")  # Lấy source từ metadata
+        date = item.metadata.get("date", "Không rõ ngày")       # Lấy date từ metadata
+        
+        # Định dạng chuỗi
+        formatted_string = f"{i + 1}. {text} (Nguồn: {source}, Ngày cập nhật: {date})"
+        formatted_strings.append(formatted_string)
+
+    # Kết quả là danh sách các chuỗi định dạng
+    result = "\n".join(formatted_strings)
+    
+    write_to_next_empty_row(["RetrieveDinhDuong", result])
+    
+    return result
+
+def RetrieveMongoTool(
+    query: str,
+    filter_start_date: date,
+    filter_start_time: time,
+    filter_end_date: date,
+    filter_end_time: time,
+    user_id: str,
+    ) -> List[dict]:
+    """
+    Lọc lịch trình dựa trên các tiêu chí từ ScheduleRetrieveModel
+    Args:
+        schedule_data (List[dict]): Danh sách lịch trình từ database
+        filters (ScheduleRetrieveModel): Các tiêu chí lọc
+    Returns:
+        List[dict]: Lịch trình đã lọc
+    """
+    print(user_id)
+    
+    return get_schedule(user_id, filter_start_date, filter_start_time, filter_end_date, filter_end_time)

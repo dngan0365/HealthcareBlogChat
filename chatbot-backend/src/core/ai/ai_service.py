@@ -1,96 +1,93 @@
 import json
+import yaml
+import os
+import csv
+import time as tm
+from datetime import date, time, datetime
+import nest_asyncio
 from typing import Sequence, List
-
+from openai.types.chat import ChatCompletionMessageToolCall
 from llama_index.llms.openai import OpenAI
+from llama_index.agent.openai import OpenAIAgent
+
 from llama_index.core.llms import ChatMessage
 from llama_index.core.tools import BaseTool, FunctionTool
 from openai.types.chat import ChatCompletionMessageToolCall
-from llama_index.agent.openai import OpenAIAgent
 from llama_index.core import PromptTemplate
-from core.ai.database import get_recent_chat_history, format_chat_history, get_user_info, format_user_info
+from functools import partial
+from typing import List, Tuple, Any
+from pydantic import BaseModel, Field
 
-from .prompts.fewshot_prompts import few_shot_example
-from .prompts.prompt_templates import prompt_template
-from .prompts.user_prompts import user_info_prompt
-from .prompts.similar_question_prompts import similar_question_prompt
-from .prompts.system_prompts import system_message_prompt
-
-import nest_asyncio
+from core.ai.database.chat_history_service import get_recent_chat_history, format_chat_history, get_user_info
+from prompts.prompt_templates import prompt_template
+from prompts.system_prompts import system_prompt
+from core.ai.tools.tools import RetrieveMongoTool, RetrieveLifeBMIBloodTool, RetrieveBenhNoiKhoa, RetrieveDinhDuong, RetrieveQuestionAnswer, RetrieveTamLy
+from llm_integration.openai_client import get_llmAgent, get_llmTransform
 
 nest_asyncio.apply()
 
-OPENAI_API_KEY ="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"
+# Load YAML configuration file
+# Load YAML configuration file
+def load_config(config_file="../configs/api_keys.yaml"):
+    with open(config_file, "r") as file:
+        return yaml.safe_load(file)
 
-# define pydantic model for auto-retrieval function
-class AutoRetrieveModel(BaseModel):
-    query: str = Field(..., description="natural language query string")
-    filter_key_list: List[str] = Field(
-        ..., description="List of metadata filter field names"
-    )
-    filter_value_list: List[Any] = Field(
+
+# Check and write to the next available empty row
+def write_to_next_empty_row(data, file_name):
+    with open(file_name, mode="a", newline="", encoding="utf-16") as file:
+        writer = csv.writer(file, quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        writer.writerow(data)  # Append the row to the end of the file
+
+template = prompt_template()
+# Load YAML configuration file
+def load_config(config_file="../configs/api_keys.yaml"):
+    with open(config_file, "r") as file:
+        return yaml.safe_load(file)
+
+# Load the OpenAI API key from the YAML file
+config = load_config()
+os.environ["OPENAI_API_KEY"] = config["openai"]["api_key"]
+OPENAI_API_KEY = config["openai"]["api_key"]
+class RetrieveModel(BaseModel):
+    query: str = Field(..., description="Câu truy vấn của người dùng bằng ngôn ngữ tự nhiên")
+
+class ScheduleRetrieveModel(BaseModel):
+    query: str = Field(..., description="Câu truy vấn của người dùng bằng ngôn ngữ tự nhiên")
+    filter_start_date: date = Field(
         ...,
         description=(
-            "List of metadata filter field values (corresponding to names"
-            " specified in filter_key_list)"
+            "Ngày bắt đầu của sự kiện trong lịch trình dạng YYYY-MM-DD"
         ),
     )
-    filter_operator_list: List[str] = Field(
+    filter_start_time: time = Field(
         ...,
         description=(
-            "Metadata filters conditions (could be one of <, <=, >, >=, ==, !=)"
+            "Thời gian bắt đầu của sự kiện trong lịch trình dạng HH:MM"
         ),
     )
-    filter_condition: str = Field(
+    filter_end_date: date = Field(
         ...,
-        description=("Metadata filters condition values (could be AND or OR)"),
+        description=(
+            "Ngày kết thúc của sự kiện trong lịch trình dạng YYYY-MM-DD"
+        ),
+    )
+    filter_end_time: time = Field(
+        ...,
+        description=(
+            "Thời gian kết thúc của sự kiện trong lịch trình dạng HH:MM"
+        ),
     )
 
 
-description = f"""\
-Use this tool to look up biographical information about celebrities.
-The vector database schema is given below:
-{vector_store_info.json()}
-"""
+descriptionLifeBMIBlood = f"""Sử dụng tool này để tra cứu thông tin về các chỉ số của cơ thể như cân nặng, chiều cao, BMI, máu, các từ viết tắt trong y khoa và chế độ ăn uống, tập thể dục, lối sống lành mạnh."""
 
+descriptionMongo = f"""Hữu ý trong việc lấy thông tin lịch trình, kế hoạch của người dùng. Hôm nay là ngày {date.today().strftime('%Y-%m-%d')}  và hiện tại là {datetime.now().strftime('%H:%M')} giờ (sử dụng để nói về hiện tại)"""
+descirptionBenhNoiKhoa = f"""Hữu ý trong việc tìm kiếm thông tin về các triệu chứng, chẩn đoán và phòng ngừa và cách chữa trị các bệnh nội khoa."""
+descriptionTamlLy = f"""Hữu ý trong việc tìm kiếm thông tin về tâm lý vị thành niên. """
+descirptionDinhDuong = f"""Hữu ý trong việc tìm kiếm thông tin về dinh dưỡng, thực phẩm."""
+descriptionQA = f"""Những câu hỏi thường gặp và có câu trả lời và những bệnh thường gặp và biểu hiện, cách phòng tránh."""
 # Create tools
-retrieveMongoTool = 
-# retrieveNutritionTool = 
-# retrieveSymptomTool = 
-# retrieveTreatmentTool = 
-retrieveLifeBMIBloodTool = 
-# Define a tool 
-tool = [retrieveMongoTool, 
-        # retrieveNutritionTool, 
-        # retrieveSymptomTool, 
-        # retrieveTreatmentTool, 
-        retrieveLifeBMIBloodTool
-        ]
-
-        
-def get_llm_and_agent():
-    """
-    Hàm khởi tạo LLM và Agent
-    """
-    
-    chat = OpenAI(
-    temperature=0, 
-    streaming=True, 
-    model="gpt-4o-mini", 
-    api_key=OPENAI_API_KEY,
-    )
-    tools = []
-    
-    prompt = 
-    
-    agent = OpenAIAgent.from_tools(
-    tools,
-    prompt,
-    llm=OpenAI(temperature=0, model="gpt-4-0613"),
-    verbose=True,
-)
-    
-    return agent
-
 
 async def get_answer_stream(question: str, chat_id: str, user_id: str):
     """
@@ -105,64 +102,128 @@ async def get_answer_stream(question: str, chat_id: str, user_id: str):
     
     Args:
         question (str): Câu hỏi của người dùng
-        thread_id (str): ID phiên chat
+        chat_id (str): ID phiên chat
         
     Returns:
         AsyncGenerator[str, None]: Generator trả về từng phần của câu trả lời
     """
-    # Khởi tạo agent với các tools cần thiết
-    agent = get_llm_and_agent()
+    # write_to_next_empty_row([question], "tools_log.csv")
+    
+    chat = get_llmAgent()
+
+    retrieveLifeBMIBloodTool = FunctionTool.from_defaults(
+        fn=RetrieveLifeBMIBloodTool,
+        name="bmi_blood_symbol_lifestyle",
+        description=descriptionLifeBMIBlood,
+        fn_schema=RetrieveModel,
+    )
+    retrieveBenhNoiKhoa = FunctionTool.from_defaults(
+        fn=RetrieveBenhNoiKhoa,
+        name="benh_noi_khoa",
+        description=descirptionBenhNoiKhoa,
+        fn_schema=RetrieveModel,
+    )
+    retrieveDinhDuong = FunctionTool.from_defaults(
+        fn=RetrieveDinhDuong,
+        name="dinh_duong",
+        description=descirptionDinhDuong,
+        fn_schema=RetrieveModel,
+    )
+    retrieveTamLy = FunctionTool.from_defaults(
+        fn=RetrieveTamLy,
+        name="tam_ly",
+        description=descriptionTamlLy,
+        fn_schema=RetrieveModel,
+    )
+    retrieveQuestionAnswer = FunctionTool.from_defaults(
+        fn=RetrieveQuestionAnswer,
+        name="question_answer",
+        description=descriptionQA,
+        fn_schema=RetrieveModel,
+    )
+    retrieveMongoTool = FunctionTool.from_defaults(
+        fn=partial(RetrieveMongoTool, user_id=user_id),
+        name="schedule",
+        description=descriptionMongo,
+        fn_schema=ScheduleRetrieveModel,
+    )
+
+    get_system_prompt = system_prompt()
+    
+    # Define a tool 
+    tools = [retrieveLifeBMIBloodTool, retrieveMongoTool, retrieveBenhNoiKhoa, retrieveDinhDuong, retrieveTamLy, retrieveQuestionAnswer]
+
+    # Validate that 'tools' does not contain any null or invalid content
+    agent = OpenAIAgent.from_tools(
+        tools,
+        llm=chat,
+        verbose=True,
+        system_prompt=get_system_prompt,
+        api_key=OPENAI_API_KEY,
+    )
+
     query_gen_str = """\
-    You are a helpful assistant that generates multiple search queries based on a \
-    single input query. Generate {num_queries} search queries, one on each line, \
-    related to the following input query:
-    Query: {query}
-    Queries:
+Bạn là một trợ lý hữu ích, có nhiệm vụ tạo ra nhiều câu truy vấn tìm kiếm dựa trên một truy vấn đầu vào (câu input có thể khó hiểu và sai chính tả, nhập sai kí tự).  
+Hãy tạo ra {num_queries} truy vấn tìm kiếm (dễ hiểu, dễ truy vấn, khắc phụ các lỗi sai), mỗi truy vấn trên một dòng, liên quan (cùng nghĩa) đến truy vấn đầu vào sau đây:
+Query: {query}
+Queries:
     """
     query_gen_prompt = PromptTemplate(query_gen_str)
 
-    llm = OpenAI(model="gpt-3.5-turbo")
+    llm = get_llmTransform()
 
-
-    def generate_queries(query: str, llm, num_queries: int = 4):
+    # Lấy lịch sử chat gần đây
+    history = get_recent_chat_history(chat_id)
+    chat_history = format_chat_history(history)
+    user_info = get_user_info(user_id)  # Chuyển sang async gọi
+    
+    def generate_queries(query: str, llm, num_queries: int = 3):
         response = llm.predict(
             query_gen_prompt, num_queries=num_queries, query=query
         )
         # assume LLM proper put each query on a newline
         queries = response.split("\n")
-        queries_str = "\n".join(queries)
-        print(f"Generated queries:\n{queries_str}")
         return queries
     
-    queries = generate_queries("What happened at Interleaf and Viaweb?", llm)
+    queries = generate_queries(question, llm)  # Chuyển sang async gọi
     
-    # Lấy lịch sử chat gần đây
-    history = get_recent_chat_history(thread_id)
-    chat_history = format_chat_history(history)
-    
-    # Biến lưu câu trả lời hoàn chỉnh
-    final_answer = ""
-    
-    # Stream từng phần của câu trả lời
-    async for event in agent.astream_events(
-        {
-            "input": question,
-            "chat_history": chat_history,
-        },
-        version="v2"
-    ):       
-        # Lấy loại sự kiện
-        kind = event["event"]
-        # Nếu là sự kiện stream từ model
-        if kind == "on_chat_model_stream":
-            # Lấy nội dung token
-            content = event['data']['chunk'].content
-            if content:  # Chỉ yield nếu có nội dung
-                # Cộng dồn vào câu trả lời hoàn chỉnh
-                final_answer += content
-                # Trả về token cho client
-                yield content
+    prompt = PromptTemplate(
+        template=template, 
+        function_mappings={
+            "formatted_history":  lambda: str(chat_history),
+            "formatted_user": lambda: str(user_info),
+            "question": lambda: question,
+            "similar_question": lambda: "\n".join(queries),
+        }
+    )
+    # Tạo nội dung hoàn chỉnh bằng cách gọi các hàm trong `function_mappings`
+    rendered_prompt = prompt.template.format(
+        formatted_history=prompt.function_mappings["formatted_history"](),
+        formatted_user=prompt.function_mappings["formatted_user"](),
+        question=prompt.function_mappings["question"](),
+        similar_question=prompt.function_mappings["similar_question"](),
+    )
 
+    # In nội dung đã thay thế
+    #print(rendered_prompt)
+    
+    start_time=tm.time()
+    response = agent.stream_chat(rendered_prompt)
+    end_time=tm.time()
+    
+    elapsed_time=end_time-start_time
+    print("response: ", response)
+    response_gen = response.response_gen
+    # Stream từng phần của câu trả lời
+    gpt_response_parts = []
+    for token in response_gen:
+        print("chunk: ", token)
+        yield token
+        gpt_response = "".join(gpt_response_parts)
+
+    # write_to_next_empty_row([question, queries, gpt_response, elapsed_time], "eval.csv")
+    
+    
 
 if __name__ == "__main__":
     import asyncio
@@ -170,9 +231,8 @@ if __name__ == "__main__":
     async def test():
         # answer = get_answer_stream("hi", "test-session")
         # print(answer)
-        async for event in get_answer_stream("hi", "test-session"):
+        async for event in get_answer_stream("hi", "test-session", "user-id"):
             print('event:', event)
         print('done')
 
-    
     asyncio.run(test())

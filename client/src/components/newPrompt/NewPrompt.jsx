@@ -8,6 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 const NewPrompt = ({ data }) => {
   const [question, setQuestion] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // New state to track loading
   const [answer, setAnswer] = useState("");
   const [img, setImg] = useState({
     isLoading: false,
@@ -44,12 +45,13 @@ const NewPrompt = ({ data }) => {
     e.preventDefault();
 
     const text = e.target.text.value;
-    if (!text) return;
+    if (!text || isLoading) return;
     if (textareaRef.current) {
       textareaRef.current.value = "";
     }
     setQuestion(text);
     setAnswer(""); // Clear previous answer
+    setIsLoading(true); // Start loading state
 
     try {
       const response = await fetch(`http://localhost:8000/chats/${data._id}`, {
@@ -89,6 +91,7 @@ const NewPrompt = ({ data }) => {
     } catch (err) {
       console.error("Error during streaming response:", err);
     }
+    setIsLoading(false); // End loading state
     setAnswer("");
     setQuestion("");
   };
@@ -105,6 +108,11 @@ const NewPrompt = ({ data }) => {
         />
       )}
       {question && <div className="message user">{question}</div>}
+      {!answer && question && (
+        <div className="message bot">
+          <img src="/3-dots-bounce.svg" alt="Submit" />
+        </div>
+      )}
       {answer && (
         <div className="message bot">
           <Markdown>{answer}</Markdown>
@@ -133,8 +141,12 @@ const NewPrompt = ({ data }) => {
               }
             }}
           />
-          <button>
-            <img src="/arrow-green.svg" alt="" />
+          <button disabled={isLoading}>
+            {isLoading ? (
+                <img src="/270-ring-with-bg.svg" alt="Loading..." />
+              ) : (
+                <img src="/arrow-green.svg" alt="Submit" />
+              )}
           </button>
         </form>
       </div>

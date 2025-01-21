@@ -3,18 +3,35 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.routes.chat import router as chat_router
 from odmantic import AIOEngine
 from motor.motor_asyncio import AsyncIOMotorClient
-from decouple import config
 import requests # <- (1)
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from typing import Annotated
 from contextlib import asynccontextmanager
+import asyncio
+
+from llm_integration.huggingface_client import embed_model
+from llm_integration.openai_client import llmAgent, llmRetriever, llmTitle, llmTransform
+from llm_integration.weaviate_client import weaviate_client
+import warnings
+warnings.filterwarnings("ignore", category=ResourceWarning)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # You can do some setup tasks here (e.g., opening DB connections)
-    yield
-    # You can do some cleanup tasks here (e.g., closing DB connections)
-    print("Shutting down gracefully")
+    print("App is starting")
+    # Create MongoDB client here during app startup
+    # Store the embed_model in app.state during startup
+    app.state.embed_model = embed_model
+    app.state.llmAgent = llmAgent
+    app.state.llmRetriever = llmRetriever
+    app.state.llmTitle = llmTitle
+    app.state.llmTransform = llmTransform
+    app.state.weaviate_client = weaviate_client
+    try: 
+        yield  # The app runs while yielding
+        print("App is shutting down")
+    finally:
+        print("App is shutting down")
+
 
 app = FastAPI(lifespan=lifespan)
 
@@ -27,24 +44,6 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
-# Replace with your MongoDB Atlas connection string
-MONGODB_ATLAS_URI = "mongodb+srv://22520929:dngan0365.@healthcare.2k8fb.mongodb.net/?retryWrites=true&w=majority&appName=HealthCare"
-CLERK_PEM_PUBLIC_KEY ="pk_test_c3RpcnJlZC1tb25rZmlzaC05MC5jbGVyay5hY2NvdW50cy5kZXYk"
-
-security = HTTPBearer()
-
-@app.on_event("startup")
-async def startup_event():
-    # Initialize MongoDB connection
-    app.state.mongo_client = AsyncIOMotorClient(MONGODB_ATLAS_URI)
-    # Initialize ODMantic engine
-    app.state.engine = AIOEngine(client=app.state.mongo_client, database="BlogHealth")
-
-
-
-# Dependency to access the MongoDB engine
-def get_engine():
-    return app.state.engine
 
 # Include routers
 app.include_router(chat_router, prefix="/chats", tags=["chat"])

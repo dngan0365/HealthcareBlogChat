@@ -65,3 +65,12 @@ tensorflow==2.12.0
 textblob==0.17.1
 
 yake==0.4.8
+
+llama-index-agent-openai-legacy
+llama-index-agent-openai
+llama-index-llms-openai
+llama-index-vector-stores-weaviate
+keras>3
+keras-nlp
+llama-index-embeddings-openai
+matplotlib

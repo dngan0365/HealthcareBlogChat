@@ -9,6 +9,7 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const { user } = useUser();
   const userId = user?.id;
+  const [loading, setLoading] = useState(false);
   const [responseText, setResponseText] = useState("");
 
 
@@ -40,22 +41,25 @@ const DashboardPage = () => {
       console.log("post data.chatId " + data.chatId);
       // Navigate to the newly created chat page using the chatId from the response
       navigate(`/dashboard/chats/${data.chatId}`);
+      setLoading(false); // Stop loading state
     },
     onError: (error) => {
       console.error("Error occurred during chat creation:", error);
+      setLoading(false); // Stop loading state
     },
   });
 
   const handleSubmit = async (e) => {
+
     e.preventDefault();
     const text = e.target.text.value.trim();
     console.log(text);
     if (!text) return;
+    setLoading(true); // Start loading state
     mutation.mutate({ text });
     // Clear the textarea after submitting
     e.target.text.value = "";
 
-       
   };
 
   return (
@@ -100,8 +104,12 @@ const DashboardPage = () => {
               }
             }}
           />
-          <button>
-            <img src="/arrow-green.svg" alt="" />
+          <button type="submit" disabled={loading}>
+            {loading ? (
+              <img src="/270-ring-with-bg.svg" alt="Loading..." />
+            ) : (
+              <img src="/arrow-green.svg" alt="Submit" />
+            )}
           </button>
         </form>
       </div>

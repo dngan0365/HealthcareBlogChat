@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, FastAPI
 from fastapi.responses import StreamingResponse
 from odmantic import AIOEngine
 from typing import AsyncGenerator
@@ -6,92 +6,62 @@ from backend.models.chat import Chat
 from backend.models.userChats import UserChats
 from openai import OpenAI
 from datetime import datetime
-from backend.schemas import CreateChatRequest
 from pymongo import MongoClient
 from bson import ObjectId
 import time 
+import logging
+# import openai
+from llm_integration.openai_client import get_llmTitle
+from core.ai.ai_service import get_answer_stream
+from llama_index.core import PromptTemplate
 #from backend.services.clerk import get_current_user  
+import yaml
+import warnings
+import csv
+import os
+warnings.filterwarnings("ignore", category=ResourceWarning)
 
-clientOpenai = OpenAI(api_key="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")
-client = MongoClient("mongodb+srv://22520929:dngan0365.@healthcare.2k8fb.mongodb.net/?retryWrites=true&w=majority&appName=HealthCare")
+
+# Load YAML configuration file
+def load_config(config_file="../configs/api_keys.yaml"):
+    with open(config_file, "r") as file:
+        return yaml.safe_load(file)
+
+# Load the OpenAI API key from the YAML file
+config = load_config()
+url=config["mongodb"]["url"]
+client = MongoClient(url, connect=False)
 db = client["BlogHealth"]
 chat_collection = db["chats"]
 user_chats_collection = db["userchats"]
 
 
-# Configure OpenAI API key
-# openai.api_key = "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"
-
-# Initialize the API router
 router = APIRouter()
 
-# Function to stream GPT response
-async def stream_gpt_response(prompt: str) -> AsyncGenerator[str, None]:
-    """
-    Stream GPT response using OpenAI's updated API.
-    """
-    try:
-        # Define the chatbot's role and user message
-        system_message = {
-            "role": "system",
-            "content": (
-                "You are a helpful chatbot specializing in health and wellness. "
-                "Provide accurate, concise, and empathetic answers to user queries. "
-                "If unsure, suggest consulting a professional."
-            ),
-        }
-        user_message = {"role": "user", "content": prompt}
-        print(f"user_message {user_message}")
-        # record the time before the request is sent
-        start_time = time.time()
-        
-        # Use the updated `chat_completions` API for streaming
-        response = clientOpenai.chat.completions.create(
-            model="gpt-4",
-            messages=[system_message, user_message],
-            temperature=0.7,
-            stream=True,  # Enable streaming
-            stream_options={"include_usage": True}, # retrieving token usage for stream response
-        )
-
-        # Calculate the time it took to receive the response
-        response_time = time.time() - start_time
-        print(f"Streaming started {response_time:.2f} seconds after request")
-
-        # Iterate over the streamed chunks
-        # for chunk in response:
-        #         delta = chunk.choices[0].delta
-        #         if "content" in delta:
-        #             print(f"Streaming content: {delta['content']}")
-        #             yield delta["content"]
-                    
-        for chunk in response:
-            if chunk.choices[0].delta.content:
-                content = chunk.choices[0].delta.content
-                print(content)
-                yield content
-                print("****************")
-        
-    except Exception as e:
-        yield f"Error: {str(e)}"
 
 # Function to stream GPT response
 async def generate_gpt_response(prompt: str) -> AsyncGenerator[str, None]:
     """
     Generates a GPT response for the given prompt using OpenAI's GPT API.
     """
+    system_str = """
+"Bạn là trợ lý tạo ra câu tóm tắt ngắn gọn cho một đoạn hội thoại khi chỉ biết một câu đầu tiên trong đoạn hội thoại. Nhiệm vụ của bạn là tạo ra một câu không quá 15 từ nói về chủ đề của cuộc hội thoại (trong tiêu đề không được nhắc 'hội thoại', 'khách hàng').\
+Ví dụ một số tiêu đề: 
+Chỉ số BMI.
+Đồ ăn tốt cho sức khỏe.
+Lịch trình làm việc hôm nay. 
+Tâm lý vị thành niên.
+Dinh dưỡng.
+Chuẩn đoán và phòng ngừa các bệnh nội khoa.
+Lối sống, sinh hoạt, thói quen."
+"""
     try:        
         # Use the updated `chat_completions` API for streaming
-        response = clientOpenai.chat.completions.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": "You are an assistant that generates concise and accurate responses about health and wellness. The sentence is not above 15 words."},
-                {"role": "user", "content": prompt}],
-            temperature=0.7,
-        )
-        print(response)
+        clientOpenai = get_llmTitle()
+        response = clientOpenai.complete(f"{system_str}\n{prompt}\nSumary:")
+        # print(response)
         
-        return str(response.choices[0].message.content.strip())
+        return str(response)
     except Exception as e:
         # Log and return an error message if an exception occurs
         print(f"Error during GPT generation: {str(e)}")
@@ -110,15 +80,15 @@ async def create_chat_stream(request: Request):
         raise HTTPException(status_code=400, detail="Chat content is required.")
 
     gpt_response_parts = []
-    async for token in stream_gpt_response(question):
+    async for token in get_answer_stream(question, user_id=user_id, chat_id=None):
         if token and not token.startswith("Error:"):
             gpt_response_parts.append(token)
         else:
             print(f"Skipped invalid token: {token}")
         
             # Save new messages to chat history
-            gpt_response = "".join(gpt_response_parts)
-    
+        gpt_response = "".join(gpt_response_parts)
+
     new_chat = {
         "user": user_id,
         "history": [{"role": "user", "parts": [{"text": question}]},
@@ -131,7 +101,7 @@ async def create_chat_stream(request: Request):
     
    
     # Generate a title for the chat using GPT
-    title_prompt = f"Create a concise and descriptive title for the following chat question:\n{question}"
+    title_prompt = f"khách hàng: {question} \nnhân viên: {gpt_response}"
     title = await generate_gpt_response(title_prompt)  # Replace this with your GPT function
 
     # Update or create user's chat list
@@ -172,20 +142,23 @@ async def add_question_stream(chat_id: str, request: Request):
         raise HTTPException(status_code=400, detail="User authentication is required.")
     if not question:
         raise HTTPException(status_code=400, detail="Question content is required.")
-
+    
     async def event_stream():
+        gpt_response=""
         gpt_response_parts = []
-        async for token in stream_gpt_response(question):
+        time_start = time.time()
+        async for token in get_answer_stream(question, user_id=user_id, chat_id=chat_id):
             if token and not token.startswith("Error:"):
+                time_end = time.time()
                 gpt_response_parts.append(token)
                 yield f"{token} "
             else:
                 print(f"Skipped invalid token: {token}")
             
                 # Save new messages to chat history
-                gpt_response = "".join(gpt_response_parts)
-
-
+            gpt_response = "".join(gpt_response_parts)
+        time
+        print("final answer: " + gpt_response)
         if not add:
             # Add both user and model responses to history
             new_items = [

@@ -55,6 +55,13 @@
         p,li{
           margin: 4px 4px;
         }
+        a{
+          color: rgb(68, 216, 73);
+          text-decoration: none;
+          &:hover{
+            text-decoration: underline;
+          }
+        }
   
         .message{
           padding: 10px;
