@@ -1,137 +1,149 @@
 .chatList {
   display: flex;
   flex-direction: column;
-  background-color: #E8F5E9;
-  height: 100%; /* Ensure it takes the full height */
+  background-color: #e8f5e9;
+  height: 100%; /* Full height */
   border-radius: 0 10px 10px 0;
+}
+.chatList .new-chat {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: 10px;
+  transition: background-color 0.3s ease, opacity 0.3s ease;
+}
 
-  .icon{
-    display: flex;
-    justify-content: space-between;
-    
-    .close{
-      display: inline-block;
-      margin: 10px;
-      border-radius: 20px;
-      background-color: transparent;
-      transition: background-color 0.3s ease;
-      
-      .closeMenuButton {
-        background-image: url('/sidebar.svg'); /* Đường dẫn tới file SVG */
-        background-repeat: no-repeat;
-        background-size: contain; /* Đảm bảo biểu tượng phù hợp với kích thước */
-        margin: 10px;
-        border: none; 
-        width: 30px;
-        height: 30px;
-        border-radius: 10px;
-        cursor: pointer;
-        opacity: 0.6;
-        padding: 15px;
-        background-color: transparent;
-      }
-  
-      .search{
-        background-image: url('/search.svg'); /* Đường dẫn tới file SVG */
-        background-repeat: no-repeat;
-        background-size: contain; /* Đảm bảo biểu tượng phù hợp với kích thước */
-        margin: 10px;
-        border: none; 
-        width: 30px;
-        height: 30px;
-        border-radius: 10px;
-        cursor: pointer;
-        opacity: 2.0;
-        padding: 15px;
-        background-color: transparent;
-      }
-      
-    }
+.chatList .new-chat:hover {
+  opacity: 0.8;
+  background-color: rgba(0, 0, 0, 0.1); /* Hover effect */
+}
+
+.chatList .chat-item {
+  font-size: small; 
+}
+.chatList .icon {
+  display: flex;
+  justify-content: space-between;
+}
+
+.chatList .icon .close {
+  display: inline-block;
+  margin: 10px;
+  border-radius: 20px;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+}
+
+.chatList .icon .closeMenuButton,
+.chatList .icon .search {
+  background-repeat: no-repeat;
+  background-size: contain;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 15px;
+  background-color: transparent;
+  transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+.chatList .icon .closeMenuButton {
+  background-image: url('/sidebar.svg');
+  opacity: 0.6;
+}
+
+.chatList .icon .search {
+  background-image: url('/search.svg');
+  opacity: 1;
+}
+
+.chatList .icon .close:hover {
+  opacity: 0.8;
+  background-color: rgba(0, 0, 0, 0.1); /* Slight hover effect */
+}
+
+.chatList hr {
+  border: none;
+  height: 2px;
+  background-color: #ddd;
+  opacity: 0.1;
+  border-radius: 5px;
+  margin: 20px 0;
+}
+
+.chatList .title {
+  font-weight: 600;
+  font-size: 10px;
+  margin-bottom: 10px;
+}
+
+.chatList .list {
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Fills available space */
+  overflow-y: auto; /* Enable scrolling */
+  padding-right: 10px; /* Space for scrollbar */
+  max-height: calc(100vh - 320px); /* Adjust for layout */
+
+  /* Scrollbar styles */
+  &::-webkit-scrollbar {
+    width: 4px;
   }
-  
-  .close:hover{
-    opacity: 0.8;
-    background-color: rgba(0, 0, 0, 0.1); /* Thay đổi alpha để đậm hơn */
-
-  }
-  
-  
-
-  hr {
-    border: none;
-    height: 2px;
-    background-color: #ddd;
-    opacity: 0.1;
-    border-radius: 5px;
-    margin: 20px 0px;
-  }
-
-  .title {
-    font-weight: 600;
-    font-size: 10px;
-    margin-bottom: 10px;
-  }
-
-  .list {
-    display: flex;
-    flex-direction: column;
-    flex: 1; /* Ensures it fills available space */
-    overflow-y: auto; /* Enable vertical scrolling */
-    padding-right: 10px; /* Space for scrollbar */
-    max-height: calc(100vh - 320px); /*Adjust for any header/footer space */
-
-    
-    /* Scrollbar styles */
-    &::-webkit-scrollbar {
-      width: 4px;
-    }
-    &::-webkit-scrollbar-track {
-      background: transparent;
-      border-radius: 10px;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: #888;
-      border-radius: 10px;
-      transition: background 0.3s ease;
-    }
-    &::-webkit-scrollbar-thumb:hover {
-      background: #555;
-    }
-  }
-
-  a {
-    padding: 10px;
+  &::-webkit-scrollbar-track {
+    background: transparent;
     border-radius: 10px;
   }
-
-  .upgrade {
-    margin-top: auto;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 12px;
-
-    img {
-      width: 24px;
-      height: 24px;
-    }
-
-    .texts {
-      display: flex;
-      flex-direction: column;
-
-      span {
-        &:first-child {
-          font-weight: 600;
-        }
-
-        &:last-child {
-          color: #888;
-        }
-      }
-    }
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+    transition: background 0.3s ease;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: #555;
   }
 }
+
+.chatList .list a {
+  display: block;
+  padding: 0.5rem;
+  text-decoration: none;
+  color: #333;
+  border-radius: 10px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.chatList .list a:hover {
+  background-color: rgba(0, 0, 0, 0.1); /* Hover background for links */
+  color: #000; /* Optional: change text color */
+}
+
+.chatList .upgrade {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.chatList .upgrade img {
+  width: 24px;
+  height: 24px;
+}
+
+.chatList .upgrade .texts {
+  display: flex;
+  flex-direction: column;
+}
+
+.chatList .upgrade .texts span:first-child {
+  font-weight: 600;
+}
+
+.chatList .upgrade .texts span:last-child {
+  color: #888;
+}
+
 .group {
   margin-bottom: 1rem;
 }
@@ -139,15 +151,12 @@
 .group-title {
   font-weight: bold;
   margin-bottom: 0.5rem;
+  color: #555; /* Slightly muted color */
 }
 
-.list a {
-  display: block;
-  padding: 0.5rem;
-  text-decoration: none;
-  color: #333;
-}
-
-.list a:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+.no-chats {
+  color: #888; /* Muted text color for empty state */
+  text-align: center;
+  padding: 1rem;
+  font-size: 14px;
 }

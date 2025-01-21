@@ -1,0 +1,9 @@
+openai:
+  api_key: "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"
+
+weaviate:
+  url: "https://wly3tkm2tkewvzycwne6fa.c0.asia-southeast1.gcp.weaviate.cloud"
+  api_key: "ruGxCkA145k9qWxpoycebKHeLGxc9vtCnLWZ"
+
+mongodb:
+  url: "mongodb+srv://22520929:dngan0365.@healthcare.2k8fb.mongodb.net/?retryWrites=true&w=majority&appName=HealthCare"
