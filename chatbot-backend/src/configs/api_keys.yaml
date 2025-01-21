@@ -1,8 +1,0 @@
-OPENAI_API_KEY = "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"
-LANGCHAIN_TRACING_V2= "true"
-LANGCHAIN_ENDPOINT="https://api.smith.langchain.com"
-LANGCHAIN_API_KEY="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"
-LANGCHAIN_PROJECT="rag-tutorial"
-
-WEAVIATE_URL = "https://mz1cnucrsmyx1ez2kcelna.c0.asia-southeast1.gcp.weaviate.cloud"
-WEAVIATE_API_KEY = "Qam226KOCXarLmqnVndGulifELsoUihGq2TQ"

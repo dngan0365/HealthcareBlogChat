@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
+import { useState } from "react";
 import "./dashboardPage.css";
 
 const DashboardPage = () => {
@@ -8,75 +9,57 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const { user } = useUser();
   const userId = user?.id;
+  const [loading, setLoading] = useState(false);
+  const [responseText, setResponseText] = useState("");
 
-  // POST method: fetch the answer
-  const fetchAnswer = async (text) => {
-    const response = await fetch("http://localhost:8000/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_id: userId,
-        question: text,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch the answer");
-    }
-
-    const result = await response.json();
-    return result.answer; // Assuming the API returns { answer: string }
-  };
 
   // Mutation for creating a new chat
   const mutation = useMutation({
-    mutationFn: async ({ text, fetchedAnswer }) => {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/chats`, {
+    mutationFn: async ({ text}) => {
+      const response = await fetch(`http://localhost:8000/chats`, {
         method: "POST",
         credentials: "include", // Ensure the request includes authentication cookies
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          userId: userId,
           text: text,
-          answer: fetchedAnswer,
         }),
       });
 
       if (!response.ok) {
         throw new Error("Failed to create chat");
       }
+      console.log(response);
       return response.json(); // This should return { chatId }
     },
     onSuccess: (data) => {
+      console.log(data);
       // Invalidate and refetch userChats query to get the updated list
       queryClient.invalidateQueries({ queryKey: ["userChats"] });
       console.log("post data.chatId " + data.chatId);
       // Navigate to the newly created chat page using the chatId from the response
       navigate(`/dashboard/chats/${data.chatId}`);
+      setLoading(false); // Stop loading state
     },
     onError: (error) => {
       console.error("Error occurred during chat creation:", error);
+      setLoading(false); // Stop loading state
     },
   });
 
   const handleSubmit = async (e) => {
+
     e.preventDefault();
-    const text = e.target.text.value;
+    const text = e.target.text.value.trim();
     console.log(text);
     if (!text) return;
+    setLoading(true); // Start loading state
+    mutation.mutate({ text });
+    // Clear the textarea after submitting
+    e.target.text.value = "";
 
-    try {
-      // Fetch the answer before creating the chat
-      const fetchedAnswer = await fetchAnswer(text);
-
-      // Trigger the mutation with both text and fetchedAnswer
-      mutation.mutate({ text, fetchedAnswer });
-    } catch (err) {
-      console.error("Error fetching the answer:", err);
-    }
   };
 
   return (
@@ -121,8 +104,12 @@ const DashboardPage = () => {
               }
             }}
           />
-          <button>
-            <img src="/arrow-green.svg" alt="" />
+          <button type="submit" disabled={loading}>
+            {loading ? (
+              <img src="/270-ring-with-bg.svg" alt="Loading..." />
+            ) : (
+              <img src="/arrow-green.svg" alt="Submit" />
+            )}
           </button>
         </form>
       </div>
