@@ -80,8 +80,7 @@ class ScheduleRetrieveModel(BaseModel):
     )
 
 
-descriptionLifeBMIBlood = f"""Sử dụng tool này để tra cứu thông tin về các chỉ số của cơ thể như cân nặng, chiều cao, BMI, máu, các từ viết tắt trong y khoa và chế độ ăn uống, tập thể dục, lối sống lành mạnh."""
-
+descriptionLifeBMIBlood = f"""Sử dụng tool này để tra cứu thông tin về các chỉ số của cơ thể như cân nặng, chiều cao, BMI (cách để có BMI lý tưởng), chế độ giảm cân, chỉ số máu khi xét nghiệm, các từ viết tắt trong y khoa và chế độ ăn uống, tập thể dục, lối sống lành mạnh."""
 descriptionMongo = f"""Hữu ý trong việc lấy thông tin lịch trình, kế hoạch của người dùng. Hôm nay là ngày {date.today().strftime('%Y-%m-%d')}  và hiện tại là {datetime.now().strftime('%H:%M')} giờ (sử dụng để nói về hiện tại)"""
 descirptionBenhNoiKhoa = f"""Hữu ý trong việc tìm kiếm thông tin về các triệu chứng, chẩn đoán và phòng ngừa và cách chữa trị các bệnh nội khoa."""
 descriptionTamlLy = f"""Hữu ý trong việc tìm kiếm thông tin về tâm lý vị thành niên. """
@@ -107,7 +106,7 @@ async def get_answer_stream(question: str, chat_id: str, user_id: str):
     Returns:
         AsyncGenerator[str, None]: Generator trả về từng phần của câu trả lời
     """
-    # write_to_next_empty_row([question], "tools_log.csv")
+    write_to_next_empty_row([question], "tools_log.csv")
     
     chat = get_llmAgent()
 
@@ -163,8 +162,8 @@ async def get_answer_stream(question: str, chat_id: str, user_id: str):
     )
 
     query_gen_str = """\
-Bạn là một trợ lý hữu ích, có nhiệm vụ tạo ra nhiều câu truy vấn tìm kiếm dựa trên một truy vấn đầu vào (câu input có thể khó hiểu và sai chính tả, nhập sai kí tự).  
-Hãy tạo ra {num_queries} truy vấn tìm kiếm (dễ hiểu, dễ truy vấn, khắc phụ các lỗi sai), mỗi truy vấn trên một dòng, liên quan (cùng nghĩa) đến truy vấn đầu vào sau đây:
+Bạn là một trợ lý hữu ích, có nhiệm vụ tạo ra nhiều câu truy vấn tìm kiếm dựa trên một truy vấn đầu vào (câu input có thể khó hiểu và sai chính tả, nhập sai kí tự). 
+Hãy tạo ra {num_queries} truy vấn tìm kiếm (dễ hiểu, dễ truy vấn, khắc phụ các lỗi sai), mỗi truy vấn trên một dòng, liên quan (cùng nghĩa) đến truy vấn đầu vào sau đây, chú ý câu quan trọng ở cuối đoạn:
 Query: {query}
 Queries:
     """
@@ -212,16 +211,16 @@ Queries:
     end_time=tm.time()
     
     elapsed_time=end_time-start_time
-    print("response: ", response)
+    #print("response: ", response)
     response_gen = response.response_gen
     # Stream từng phần của câu trả lời
     gpt_response_parts = []
     for token in response_gen:
-        print("chunk: ", token)
+        #print("chunk: ", token)
         yield token
         gpt_response = "".join(gpt_response_parts)
 
-    # write_to_next_empty_row([question, queries, gpt_response, elapsed_time], "eval.csv")
+    write_to_next_empty_row([question, queries, gpt_response, elapsed_time], "eval.csv")
     
     
 

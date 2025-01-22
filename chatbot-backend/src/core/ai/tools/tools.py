@@ -11,7 +11,6 @@ from llama_index.core.vector_stores import (
 )
 from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.query_engine import RetrieverQueryEngine
-import weaviate
 from llama_index.llms.openai import OpenAI
 from llama_index.core.retrievers import VectorIndexAutoRetriever
 from llama_index.core import Settings
@@ -78,6 +77,13 @@ vector_store_co_the_info = VectorStoreInfo(
             ),
         ),
         MetadataInfo(
+            name="tags",
+            type="str",
+            description=(
+                "Các từ khóa liên quan đến thông tin"
+            ),
+        ),
+        MetadataInfo(
             name="source",
             type="str",
             description=(
@@ -131,7 +137,7 @@ def RetrieveLifeBMIBloodTool(query: str = None, embed_model = Depends(get_embed_
     
     for i, item in enumerate(response):
         text = item.text
-        source = item.metadata.get("source", "Không rõ nguồn")  # Lấy source từ metadata
+        source = (item.metadata.get("source") or item.metadata.get("src_url") or "Không rõ nguồn")# Lấy source từ metadata
         date = item.metadata.get("date", "Không rõ ngày")       # Lấy date từ metadata
         
         # Định dạng chuỗi
@@ -183,7 +189,7 @@ def RetrieveQuestionAnswer(query: str = None, embed_model = Depends(get_embed_mo
 
     for i, item in enumerate(response):
         text = item.text
-        source = item.metadata.get("source", "Không rõ nguồn")  # Lấy source từ metadata
+        source = (item.metadata.get("source") or item.metadata.get("src_url") or "Không rõ nguồn")# Lấy source từ metadata
         date = item.metadata.get("date", "Không rõ ngày")       # Lấy date từ metadata
         
         # Định dạng chuỗi
@@ -234,7 +240,7 @@ def RetrieveBenhNoiKhoa(query: str = None, embed_model = Depends(get_embed_model
     
     for i, item in enumerate(response):
         text = item.text
-        source = item.metadata.get("source", "Không rõ nguồn")  # Lấy source từ metadata
+        source = (item.metadata.get("source") or item.metadata.get("src_url") or "Không rõ nguồn")# Lấy source từ metadata
         date = item.metadata.get("date", "Không rõ ngày")       # Lấy date từ metadata
         
         # Định dạng chuỗi
@@ -287,7 +293,7 @@ def RetrieveTamLy(query: str = None, embed_model = Depends(get_embed_model)) :
     
     for i, item in enumerate(response):
         text = item.text
-        source = item.metadata.get("source", "Không rõ nguồn")  # Lấy source từ metadata
+        source = (item.metadata.get("source") or item.metadata.get("src_url") or "Không rõ nguồn")# Lấy source từ metadata
         date = item.metadata.get("date", "Không rõ ngày")       # Lấy date từ metadata
         
         # Định dạng chuỗi
@@ -340,7 +346,7 @@ def RetrieveDinhDuong(query: str = None, embed_model = Depends(get_embed_model))
     
     for i, item in enumerate(response):
         text = item.text
-        source = item.metadata.get("source", "Không rõ nguồn")  # Lấy source từ metadata
+        source = (item.metadata.get("source") or item.metadata.get("src_url") or "Không rõ nguồn")# Lấy source từ metadata
         date = item.metadata.get("date", "Không rõ ngày")       # Lấy date từ metadata
         
         # Định dạng chuỗi
@@ -370,6 +376,6 @@ def RetrieveMongoTool(
     Returns:
         List[dict]: Lịch trình đã lọc
     """
-    print(user_id)
+    
     
     return get_schedule(user_id, filter_start_date, filter_start_time, filter_end_date, filter_end_time)

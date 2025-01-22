@@ -11,10 +11,14 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from datetime import date, time
 import yaml
 import pytz  # Để xử lý múi giờ
-
-
+import csv
 import warnings
 warnings.filterwarnings("ignore", category=ResourceWarning)
+
+def write_to_next_empty_row(data, file_name="tools_log.csv"):
+    with open(file_name, mode="a", newline="", encoding="utf-16") as file:
+        writer = csv.writer(file)
+        writer.writerow(data)  # Append the row to the end of the file
 
 # Load YAML configuration file
 def load_config(config_file="../configs/api_keys.yaml"):
@@ -180,5 +184,5 @@ def get_schedule(
             "Thời gian bắt đầu (năm, tháng, ngày, giờ, phút)": start_time_utc.strftime("%Y-%m-%d %H:%M:%S"),  # Chuyển đổi thành chuỗi
             "Thời gian kết thúc (năm, tháng, ngày, giờ, phút)": end_time_utc.strftime("%Y-%m-%d %H:%M:%S"),      # Chuyển đổi thành chuỗi
         })
-    
+    write_to_next_empty_row(["RetrieveMongo", filtered_schedule])
     return filtered_schedule
