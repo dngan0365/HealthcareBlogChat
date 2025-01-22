@@ -106,7 +106,7 @@ async def get_answer_stream(question: str, chat_id: str, user_id: str):
     Returns:
         AsyncGenerator[str, None]: Generator trả về từng phần của câu trả lời
     """
-    write_to_next_empty_row([question], "tools_log.csv")
+    write_to_next_empty_row([question,"text"], "tools_log.csv")
     
     chat = get_llmAgent()
 
@@ -218,6 +218,7 @@ Queries:
     for token in response_gen:
         #print("chunk: ", token)
         yield token
+        gpt_response_parts.append(token)
         gpt_response = "".join(gpt_response_parts)
 
     write_to_next_empty_row([question, queries, gpt_response, elapsed_time], "eval.csv")
