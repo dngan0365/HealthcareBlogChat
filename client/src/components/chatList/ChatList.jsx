@@ -137,7 +137,7 @@ const ChatList = () => {
                       onClick={() => setSelectedChatId(chat._id)}
                     >
 
-                    > <p className="chat-item text-lg font-medium">
+                    <p className="chat-item text-lg font-medium">
 
                       {chat.title}
                     </p>

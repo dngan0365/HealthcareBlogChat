@@ -1,15 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, FastAPI
 from fastapi.responses import StreamingResponse
-from odmantic import AIOEngine
 from typing import AsyncGenerator
 from backend.models.chat import Chat
-from backend.models.userChats import UserChats
-from openai import OpenAI
 from datetime import datetime
 from pymongo import MongoClient
 from bson import ObjectId
 import time 
-import logging
+
 # import openai
 from llm_integration.openai_client import get_llmTitle
 from core.ai.ai_service import get_answer_stream
@@ -45,7 +42,7 @@ async def generate_gpt_response(prompt: str) -> AsyncGenerator[str, None]:
     Generates a GPT response for the given prompt using OpenAI's GPT API.
     """
     system_str = """
-"Bạn là trợ lý tạo ra câu tóm tắt ngắn gọn cho một đoạn hội thoại khi chỉ biết một câu đầu tiên trong đoạn hội thoại. Nhiệm vụ của bạn là tạo ra một câu không quá 15 từ nói về chủ đề của cuộc hội thoại (trong tiêu đề không được nhắc 'hội thoại', 'khách hàng').\
+"Bạn là trợ lý tạo ra câu tóm tắt ngắn gọn cho một đoạn hội thoại khi chỉ biết một câu đầu tiên trong đoạn hội thoại. Nhiệm vụ của bạn là tạo ra một câu không quá 15 từ nói về chủ đề của cuộc hội thoại (trong tiêu đề không được nhắc 'hội thoại', 'khách hàng', chỉ có kí tự chuỗi, không có kí tự đặc biệt).
 Ví dụ một số tiêu đề: 
 Chỉ số BMI.
 Đồ ăn tốt cho sức khỏe.
@@ -58,7 +55,7 @@ Lối sống, sinh hoạt, thói quen."
     try:        
         # Use the updated `chat_completions` API for streaming
         clientOpenai = get_llmTitle()
-        response = clientOpenai.complete(f"{system_str}\n{prompt}\nSumary:")
+        response = clientOpenai.complete(f"{system_str} {prompt} Tóm tắt:")
         # print(response)
         
         return str(response)
@@ -101,9 +98,9 @@ async def create_chat_stream(request: Request):
     
    
     # Generate a title for the chat using GPT
-    title_prompt = f"khách hàng: {question} \nnhân viên: {gpt_response}"
+    title_prompt = f"khách hàng: {question} nhân viên: {gpt_response}"
     title = await generate_gpt_response(title_prompt)  # Replace this with your GPT function
-
+    print(title)
     # Update or create user's chat list
     user_chats = user_chats_collection.find_one({"user": user_id})
     chat_entry = {
