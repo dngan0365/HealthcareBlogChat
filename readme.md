@@ -123,17 +123,14 @@ Setting Up Environment Variables
 
         CopyEdit
 
-        `SECRET_KEY=your-secret-key
-        DATABASE_URL=your-database-url`
-
-        `MONGO=your-mongo-url
-        CLIENT_URL="http://localhost:5173"
-        CLERK_WEBHOOK_SECRET=your-webhook-secret
-        CLERK_PUBLISHABLE_KEY=your-publishable-key
-        CLERK_SECRET_KEY=your-clerk-secret-key
-        IK_URL_ENDPOINT=your-ik-url-endpoint
-        IK_PUBLIC_KEY=your-ik-public-key
-        IK_PRIVATE_KEY=your-ik-private-key`
+        `MONGO=your-mongo-url`
+        `CLIENT_URL="http://localhost:5173"`
+        `CLERK_WEBHOOK_SECRET=your-webhook-secret`
+        `CLERK_PUBLISHABLE_KEY=your-publishable-key`
+        `CLERK_SECRET_KEY=your-clerk-secret-key`
+        `IK_URL_ENDPOINT=your-ik-url-endpoint`
+        `IK_PUBLIC_KEY=your-ik-public-key`
+        `IK_PRIVATE_KEY=your-ik-private-key`
     - Mongo for database: https://www.mongodb.com/?msockid=0047e0678f906e71157cf5648ef66f2d
     - Clerk for Authentication: https://clerk.com/
     - IK fro images: https://imagekit.io/docs/api-overview 
@@ -147,13 +144,13 @@ Setting Up Environment Variables
 
         CopyEdit
 
-        `openai:
-            api_key: your-key
-        weaviate:
-            url: your-weaviate-url
-            api_key: your-weaviate-api-key
-        mongodb:
-            url: your-mongo-url`
+        `openai:`
+            `api_key: your-key`
+        `weaviate:`
+        `    url: your-weaviate-url`
+        `    api_key: your-weaviate-api-key`
+        `mongodb:`
+        `    url: your-mongo-url`
 
 4.  Ensure the `api_keys.yaml` files are listed in `.gitignore` to prevent them from being pushed to the repository.
 
@@ -170,8 +167,8 @@ Running the Project
 
     CopyEdit
 
-    `cd client
-    npm run dev`
+    `cd client`
+    `npm run dev`
 
 2.  Open your browser and visit: http://localhost:5173
 
@@ -183,8 +180,8 @@ Running the Project
 
     CopyEdit
 
-    `cd backend
-    npm start`
+    `cd backend`
+    `npm start`
 
 2.  Open your browser and visit: http://localhost:3000
 
@@ -196,9 +193,9 @@ Running the Project
 
     CopyEdit
 
-    `cd backend
-    cd src
-    python -m uvicorn backend.main:app --reload`
+    `cd backend`
+    `cd src`
+    `python -m uvicorn backend.main:app --reload`
 
 2.  API documentation will be available at:
 
@@ -218,8 +215,8 @@ Build and Deployment
 
     CopyEdit
 
-    `cd frontend
-    npm run build`
+    `cd frontend`
+    `npm run build`
 
 2.  The production-ready files will be in the `dist` folder.
 
