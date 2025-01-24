@@ -19,7 +19,7 @@ llmTitle = OpenAI(
 
 llmAgent = OpenAI(
         temperature=0,
-        model="gpt-4o-mini",
+        model="gpt-4",
         api_key=config["openai"]["api_key"])
 
 llmRetriever = OpenAI(
