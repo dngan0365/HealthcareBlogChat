@@ -25,3 +25,6 @@ dist-ssr
 
 #venv
 venv/*
+.env
+api_keys.yaml
+__pycache__/*

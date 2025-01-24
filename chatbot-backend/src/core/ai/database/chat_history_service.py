@@ -175,14 +175,20 @@ def get_schedule(
         start_time_utc = event.get("StartTime")
         end_time_utc = event.get("EndTime")
 
+        # Gắn múi giờ UTC nếu thiếu
+        if start_time_utc.tzinfo is None:
+            start_time_utc = pytz.utc.localize(start_time_utc)
+        if end_time_utc.tzinfo is None:
+            end_time_utc = pytz.utc.localize(end_time_utc)
+
         # Chuyển thời gian UTC về UTC+7
-        start_time_utc = start_time_utc.astimezone(tz_utc_plus_7)
-        end_time_utc = end_time_utc.astimezone(tz_utc_plus_7)
+        start_time_local = start_time_utc.astimezone(tz_utc_plus_7)
+        end_time_local = end_time_utc.astimezone(tz_utc_plus_7)
 
         filtered_schedule.append({
             "Chủ đề": event.get("Subject", ""),
-            "Thời gian bắt đầu (năm, tháng, ngày, giờ, phút)": start_time_utc.strftime("%Y-%m-%d %H:%M:%S"),  # Chuyển đổi thành chuỗi
-            "Thời gian kết thúc (năm, tháng, ngày, giờ, phút)": end_time_utc.strftime("%Y-%m-%d %H:%M:%S"),      # Chuyển đổi thành chuỗi
+            "Thời gian bắt đầu (UTC+7)": start_time_local.strftime("%Y-%m-%d %H:%M:%S %Z"),  # Ghi rõ múi giờ
+            "Thời gian kết thúc (UTC+7)": end_time_local.strftime("%Y-%m-%d %H:%M:%S %Z"),  # Ghi rõ múi giờ
         })
     write_to_next_empty_row(["RetrieveMongo", filtered_schedule])
     return filtered_schedule
