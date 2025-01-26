@@ -78,6 +78,31 @@ System Architecture Overview
 ![](assets/image/system.png)
 > Chatbot System
 ![](assets/image/chatbot.png)
+
+* * * * *
+
+Future Scope
+----------
+-   **Optimized Prompt and Tool Descriptions**
+
+    -   Design more specific and effective prompts to enhance chatbot performance.
+    -   Refine descriptions of tools to ensure clarity and usability.
+-   **Admin Dashboard**
+
+    -   Develop a dedicated dashboard for administrators to manage users, content, and system settings efficiently.
+-   **Search for Missing Information**
+
+    -   Enable the chatbot to search the Internet for missing information or provide guidance when it lacks data to respond accurately.
+-   **Web Deployment**
+
+    -   Deploy the web application for public access on platforms like Vercel, Netlify, or a dedicated server.
+-   **Image and Voice Processing**
+
+    -   Add support for users to upload images for analysis or interpretation.
+    -   Implement voice interaction capabilities for queries and responses.
+-   **Schedule Database Management**
+
+    -   Introduce features for users to modify their schedules directly, such as deleting or updating entries in the database.
 * * * * *
 
 Installation
@@ -149,9 +174,9 @@ Setting Up Environment Variables
         IK_URL_ENDPOINT=your-ik-url-endpoint
         IK_PUBLIC_KEY=your-ik-public-key
         IK_PRIVATE_KEY=your-ik-private-key 
-    - Mongo for database: https://www.mongodb.com/?msockid=0047e0678f906e71157cf5648ef66f2d
-    - Clerk for Authentication: https://clerk.com/
-    - IK fro images: https://imagekit.io/docs/api-overview 
+    - Mongo for database: [Mongo](https://www.mongodb.com/?msockid=0047e0678f906e71157cf5648ef66f2d)
+    - Clerk for Authentication: [Cleark](https://clerk.com/)
+    - IK fro images: [ImageKit](https://imagekit.io/docs/api-overview) 
 
 3.  **Chatbot Backend**:
 
