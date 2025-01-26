@@ -180,14 +180,14 @@ Setting Up Environment Variables
         api_keys.yaml
 
         CopyEdit
-
-        `openai:`
-            `api_key: your-key`
-        `weaviate:`
-        `    url: your-weaviate-url`
-        `    api_key: your-weaviate-api-key`
-        `mongodb:`
-        `    url: your-mongo-url`
+        ```env
+        openai:
+            api_key: your-key
+        weaviate:
+            url: your-weaviate-url
+            api_key: your-weaviate-api-key
+        mongodb:
+            url: your-mongo-url
 
 4.  Ensure the `api_keys.yaml` files are listed in `.gitignore` to prevent them from being pushed to the repository.
 
