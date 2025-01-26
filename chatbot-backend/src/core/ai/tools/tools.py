@@ -147,7 +147,7 @@ def RetrieveLifeBMIBloodTool(query: str = None, embed_model = Depends(get_embed_
     # Kết quả là danh sách các chuỗi định dạng
     result = "\n".join(formatted_strings)
     
-    write_to_next_empty_row(["RetrieveLifeBloodTool", result])
+    # write_to_next_empty_row(["RetrieveLifeBloodTool", result])
     return result
 
 def RetrieveQuestionAnswer(query: str = None, embed_model = Depends(get_embed_model)) :
@@ -199,7 +199,7 @@ def RetrieveQuestionAnswer(query: str = None, embed_model = Depends(get_embed_mo
     # Kết quả là danh sách các chuỗi định dạng
     result = "\n".join(formatted_strings)
     
-    write_to_next_empty_row(["RetrieveQuestionAnswer", result])
+    #write_to_next_empty_row(["RetrieveQuestionAnswer", result])
     return result
 
 def RetrieveBenhNoiKhoa(query: str = None, embed_model = Depends(get_embed_model)) :
@@ -250,7 +250,7 @@ def RetrieveBenhNoiKhoa(query: str = None, embed_model = Depends(get_embed_model
     # Kết quả là danh sách các chuỗi định dạng
     result = "\n".join(formatted_strings)
     
-    write_to_next_empty_row(["RetrieveLifeBloodTool", result])
+    #write_to_next_empty_row(["RetrieveLifeBloodTool", result])
     
     return result
 
@@ -303,7 +303,7 @@ def RetrieveTamLy(query: str = None, embed_model = Depends(get_embed_model)) :
     # Kết quả là danh sách các chuỗi định dạng
     result = "\n".join(formatted_strings)
     
-    write_to_next_empty_row(["RetrieveTamLy", result])
+    #write_to_next_empty_row(["RetrieveTamLy", result])
     
     return result
 
@@ -356,7 +356,7 @@ def RetrieveDinhDuong(query: str = None, embed_model = Depends(get_embed_model))
     # Kết quả là danh sách các chuỗi định dạng
     result = "\n".join(formatted_strings)
     
-    write_to_next_empty_row(["RetrieveDinhDuong", result])
+    #write_to_next_empty_row(["RetrieveDinhDuong", result])
     
     return result
 

@@ -61,7 +61,7 @@ def get_recent_chat_history(chat_id: str) -> List[dict]:
         chats = list(
             chat_collection.find({"_id": object_id})
             .sort("created_at", -1)  # Sort by created_at descending
-            .limit(5)  # Limit results to the most recent 10
+            .limit(4)  # Limit results to the most recent 10
         )
         return chats
     except Exception as e:
@@ -190,5 +190,5 @@ def get_schedule(
             "Thời gian bắt đầu (UTC+7)": start_time_local.strftime("%Y-%m-%d %H:%M:%S %Z"),  # Ghi rõ múi giờ
             "Thời gian kết thúc (UTC+7)": end_time_local.strftime("%Y-%m-%d %H:%M:%S %Z"),  # Ghi rõ múi giờ
         })
-    write_to_next_empty_row(["RetrieveMongo", filtered_schedule])
+    # write_to_next_empty_row(["RetrieveMongo", filtered_schedule])
     return filtered_schedule
