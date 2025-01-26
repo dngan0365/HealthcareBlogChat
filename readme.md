@@ -17,6 +17,7 @@ Table of Contents
 -   [Features](#features)
 -   [Bot in Action](#bot-in-action)
 -   [System Architecture Overview](#system-architecture-overview)
+-   [Future Scope](#future-scope)
 -   [Tech Stack](#tech-stack)
 -   [Installation](#installation)
 -   [Setting Up Environment Variables](#setting-up-environment-variables)
