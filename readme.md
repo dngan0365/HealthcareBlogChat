@@ -94,7 +94,6 @@ Installation
 1.  Clone the repository:
 
     ```bash
-    CopyEdit
     `git clone https://github.com/dngan0365/HealthcareBlogChat
     cd HealthcareBlogChat`
 
@@ -103,20 +102,17 @@ Installation
     -   **Frontend**:
 
         ```bash
-        CopyEdit
         `cd client
         npm install`
 
     -   **Backend**:
 
         ```bash
-        CopyEdit
         `cd backend
         npm install`
 
     -   **Chatbot Backend**:
         ```bash
-        CopyEdit
         `cd chatbot-backend
         pip install -r requirements.txt`
 
@@ -130,7 +126,6 @@ Setting Up Environment Variables
     -   Create a `.env` file in the `client` directory.
     -   Add your environment variables:
         ```env
-        CopyEdit
         VITE_API_URL=http://localhost:3000
         VITE_IK_URL_ENDPOINT=your-vite-ik-url-endpoint
         VITE_IK_PUBLIC_KEY=your-vite-ik-public-key 
@@ -146,7 +141,6 @@ Setting Up Environment Variables
     -   Create a `.env` file in the `backend` directory.
     -   Add your environment variables:
         ```env
-        CopyEdit
         MONGO=your-mongo-url
         CLIENT_URL="http://localhost:5173"
         CLERK_WEBHOOK_SECRET=your-webhook-secret
@@ -167,7 +161,6 @@ Setting Up Environment Variables
         api_keys.yaml
 
         ```env
-        CopyEdit
         openai:
             api_key: your-key
         weaviate:
@@ -188,9 +181,6 @@ Running the Project
 1.  Start the development server:
 
     ```bash
-
-    CopyEdit
-
     `cd client`
     `npm run dev`
 
@@ -202,8 +192,6 @@ Running the Project
 
     ```bash
 
-    CopyEdit
-
     `cd backend`
     `npm start`
 
@@ -214,8 +202,6 @@ Running the Project
 1.  Start the FastAPI server:
 
     ```bash
-
-    CopyEdit
 
     `cd backend`
     `cd src`
@@ -237,8 +223,6 @@ Build and Deployment
 
     ```bash
 
-    CopyEdit
-
     `cd frontend`
     `npm run build`
 
@@ -249,7 +233,5 @@ Build and Deployment
 1.  Use a production-grade server like `gunicorn` or `uvicorn` with multiple workers:
 
     ```bash
-
-    CopyEdit
 
     `python -m backend.uvicorn main:app --host 0.0.0.0 --port 8000`
