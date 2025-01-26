@@ -221,7 +221,7 @@ Queries:
         gpt_response_parts.append(token)
         gpt_response = "".join(gpt_response_parts)
 
-    write_to_next_empty_row([question, queries, gpt_response, elapsed_time], "eval.csv")
+    #write_to_next_empty_row([question, queries, gpt_response, elapsed_time], "eval.csv")
     
     
 

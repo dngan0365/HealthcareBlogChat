@@ -1,8 +1,14 @@
-BLOG + SCHEDULE + CHATBOT FOR HEALTHCARE
+MedComp Assistant
 ============
+
+MedComp Assistant is a health-focused, AI-powered assistant designed to provide accurate, reliable, and empathetic support to users of all ages, especially teenagers. With over 10 years of medical knowledge integrated into its system, MedComp aims to simplify complex health information into easy-to-understand advice while offering personalized care.
 
 A web application and chatbot backend built using **Vite** for the frontend and backend and **FastAPI** for the chatbot backend.
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![build-status workflow](https://github.com/nishanb/Namma-Bot/actions/workflows/app-deploy.yml/badge.svg)
+![Contributors workflow](https://img.shields.io/github/contributors/nishanb/Namma-Bot)
+![GitHub issues](https://img.shields.io/github/issues/nishanb/Namma-Bot)
 * * * * *
 
 Table of Contents
@@ -23,11 +29,26 @@ Table of Contents
 
 Features
 --------
-
--   **Frontend**: Interactive web interface built with the Vite framework.
--   **Backend**: REST API for chatbot powered by Express, FastAPI.
--   **Environment Management**: `.env`, `api_key.yaml` for secure key management.
--   **Scalable**: Modular structure to add more features as needed.
+> System Features
+-   Users can share articles, tips, and experiences about 
+-   A blog platform for people to exchange ideas and learn from others' experiences.
+-   Users can create and manage schedules for:
+    -   Medication reminders.
+    -   Workout plans.
+    -   Health checkups or doctor appointments.
+- An intuitive interface to help users align their daily health plans
+> Bot Features
+-   Users can ask the chatbot any questions related to:
+    -   Diseases and symptoms.
+    -   Psychology and mental health.
+    -   Nutrition advice for healthy living.
+    -   Tips for improving lifestyle.
+-   The chatbot analyzes user schedules and provides **personalized recommendations** to improve health and wellness.
+-   Suggests optimized plans for fitness, meals, and mental well-being.
+-   Provides **information about diseases**, their symptoms, prevention, and treatment options.
+-   Answers questions in **easy-to-understand language**, avoiding medical jargon.
+-   Offers personalized advice to help users maintain a healthy lifestyle.
+-   Answers questions about food choices, fitness routines, and mental relaxation techniques.
 
 * * * * *
 
@@ -36,9 +57,25 @@ Tech Stack
 
 -   **Frontend**: Vite, React
 -   **Backend**: Express, FastAPI, Python 3.11
--   **Package Manager**: npm (for frontend and backedn dependencies), pip (for chatbot backend dependencies)
+-   **Package Manager**: npm (for frontend and backend dependencies), pip (for chatbot backend dependencies)
 -   **Database**: MongoDB
 
+* * * * *
+
+Bot in Action
+------------
+> Watch the below video to get a better idea on how bot works
+
+[![MedComp Demo](assets/image/Home.png)](https://www.youtube.com/watch?v=p2UKElI-zbA&t=11s "Video Title")
+
+* * * * *
+
+System Architecture Overview
+----------
+> Common System
+![](assets/image/system.png)
+> Chatbot System
+![](assets/image/chatbot.png)
 * * * * *
 
 Installation
@@ -97,7 +134,7 @@ Setting Up Environment Variables
 
 1.  **Frontend**:
 
-    -   Create a `.env` file in the `frontend` directory.
+    -   Create a `.env` file in the `client` directory.
     -   Add your environment variables:
 
         env
@@ -105,15 +142,15 @@ Setting Up Environment Variables
         CopyEdit
 
         `VITE_API_URL=http://localhost:3000`
-        `VITE_IK_URL_ENDPOINT` 
-        `VITE_IK_PUBLIC_KEY` 
-        `VITE_IK_SECRET_KEY` 
-        `VITE_CLERK_PUBLISHABLE_KEY`
-        `VITE_API_URL`
-        `VITE_GEMINI_PUBLIC_KEY`
-        `LICENSE_KEY_SYNCFUSION`
-    - For IK (support images): https://imagekit.io/docs/api-overview 
-    - For Syncfusion (support schedule): https://www.syncfusion.com/downloads
+        `VITE_IK_URL_ENDPOINT=your-vite-ik-url-endpoint` 
+        `VITE_IK_PUBLIC_KEY=your-vite-ik-public-key` 
+        `VITE_IK_SECRET_KEY=your-vite-ik-secret-key` 
+        `VITE_CLERK_PUBLISHABLE_KEY=your-vite-clerk-publishable`
+        `VITE_API_URL=your-vite-api-url`
+        `VITE_GEMINI_PUBLIC_KEY=your-gemini-public`
+        `LICENSE_KEY_SYNCFUSION=your-license-key-syncfusion`
+    - For IK (support images): [ImageKit](https://imagekit.io/docs/api-overview)
+    - For Syncfusion (support schedule): [Syncfusion](https://www.syncfusion.com/downloads)
 2.  **Backend**:
 
     -   Create a `.env` file in the `backend` directory.
@@ -122,18 +159,15 @@ Setting Up Environment Variables
         env
 
         CopyEdit
-
-        `SECRET_KEY=your-secret-key
-        DATABASE_URL=your-database-url`
-
-        `MONGO=your-mongo-url
+        ```env
+        MONGO=your-mongo-url
         CLIENT_URL="http://localhost:5173"
         CLERK_WEBHOOK_SECRET=your-webhook-secret
         CLERK_PUBLISHABLE_KEY=your-publishable-key
         CLERK_SECRET_KEY=your-clerk-secret-key
         IK_URL_ENDPOINT=your-ik-url-endpoint
         IK_PUBLIC_KEY=your-ik-public-key
-        IK_PRIVATE_KEY=your-ik-private-key`
+        IK_PRIVATE_KEY=your-ik-private-key `
     - Mongo for database: https://www.mongodb.com/?msockid=0047e0678f906e71157cf5648ef66f2d
     - Clerk for Authentication: https://clerk.com/
     - IK fro images: https://imagekit.io/docs/api-overview 
@@ -147,13 +181,13 @@ Setting Up Environment Variables
 
         CopyEdit
 
-        `openai:
-            api_key: your-key
-        weaviate:
-            url: your-weaviate-url
-            api_key: your-weaviate-api-key
-        mongodb:
-            url: your-mongo-url`
+        `openai:`
+            `api_key: your-key`
+        `weaviate:`
+        `    url: your-weaviate-url`
+        `    api_key: your-weaviate-api-key`
+        `mongodb:`
+        `    url: your-mongo-url`
 
 4.  Ensure the `api_keys.yaml` files are listed in `.gitignore` to prevent them from being pushed to the repository.
 
@@ -170,8 +204,8 @@ Running the Project
 
     CopyEdit
 
-    `cd client
-    npm run dev`
+    `cd client`
+    `npm run dev`
 
 2.  Open your browser and visit: http://localhost:5173
 
@@ -183,8 +217,8 @@ Running the Project
 
     CopyEdit
 
-    `cd backend
-    npm start`
+    `cd backend`
+    `npm start`
 
 2.  Open your browser and visit: http://localhost:3000
 
@@ -196,9 +230,9 @@ Running the Project
 
     CopyEdit
 
-    `cd backend
-    cd src
-    python -m uvicorn backend.main:app --reload`
+    `cd backend`
+    `cd src`
+    `python -m uvicorn backend.main:app --reload`
 
 2.  API documentation will be available at:
 
@@ -218,8 +252,8 @@ Build and Deployment
 
     CopyEdit
 
-    `cd frontend
-    npm run build`
+    `cd frontend`
+    `npm run build`
 
 2.  The production-ready files will be in the `dist` folder.
 
