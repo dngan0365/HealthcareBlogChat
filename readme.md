@@ -94,27 +94,27 @@ Installation
 1.  Clone the repository:
 
     ```bash
-    `git clone https://github.com/dngan0365/HealthcareBlogChat
-    cd HealthcareBlogChat`
+    git clone https://github.com/dngan0365/HealthcareBlogChat
+    cd HealthcareBlogChat
 
 2.  Install dependencies:
 
     -   **Frontend**:
 
         ```bash
-        `cd client
-        npm install`
+        cd client
+        npm install
 
     -   **Backend**:
 
         ```bash
-        `cd backend
-        npm install`
+        cd backend
+        npm install
 
     -   **Chatbot Backend**:
         ```bash
-        `cd chatbot-backend
-        pip install -r requirements.txt`
+        cd chatbot-backend
+        pip install -r requirements.txt
 
 * * * * *
 
@@ -181,8 +181,8 @@ Running the Project
 1.  Start the development server:
 
     ```bash
-    `cd client`
-    `npm run dev`
+    cd client
+    npm run dev
 
 2.  Open your browser and visit: http://localhost:5173
 
@@ -191,9 +191,8 @@ Running the Project
 1.  Start the FastAPI server:
 
     ```bash
-
-    `cd backend`
-    `npm start`
+    cd backend
+    npm start
 
 2.  Open your browser and visit: http://localhost:3000
 
@@ -202,10 +201,9 @@ Running the Project
 1.  Start the FastAPI server:
 
     ```bash
-
-    `cd backend`
-    `cd src`
-    `uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000`
+    cd backend
+    cd src
+    uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 
 2.  API documentation will be available at:
 
@@ -222,9 +220,8 @@ Build and Deployment
 1.  Build for production:
 
     ```bash
-
-    `cd frontend`
-    `npm run build`
+    cd frontend
+    npm run build
 
 2.  The production-ready files will be in the `dist` folder.
 
@@ -234,4 +231,4 @@ Build and Deployment
 
     ```bash
 
-    `python -m backend.uvicorn main:app --host 0.0.0.0 --port 8000`
+    python -m backend.uvicorn main:app --host 0.0.0.0 --port 8000
