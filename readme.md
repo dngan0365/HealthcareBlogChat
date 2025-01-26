@@ -15,6 +15,8 @@ Table of Contents
 -----------------
 
 -   [Features](#features)
+-   [Bot in Action](#bot-in-action)
+-   [System Architecture Overview](#system-architecture-overview)
 -   [Tech Stack](#tech-stack)
 -   [Installation](#installation)
 -   [Setting Up Environment Variables](#setting-up-environment-variables)
@@ -91,10 +93,8 @@ Installation
 
 1.  Clone the repository:
 
-    bash
-
+    ```bash
     CopyEdit
-
     `git clone https://github.com/dngan0365/HealthcareBlogChat
     cd HealthcareBlogChat`
 
@@ -102,28 +102,21 @@ Installation
 
     -   **Frontend**:
 
-        bash
-
+        ```bash
         CopyEdit
-
         `cd client
         npm install`
 
     -   **Backend**:
 
-        bash
-
+        ```bash
         CopyEdit
-
         `cd backend
         npm install`
 
     -   **Chatbot Backend**:
-
-        bash
-
+        ```bash
         CopyEdit
-
         `cd chatbot-backend
         pip install -r requirements.txt`
 
@@ -136,11 +129,8 @@ Setting Up Environment Variables
 
     -   Create a `.env` file in the `client` directory.
     -   Add your environment variables:
-
-        env
-
-        CopyEdit
         ```env
+        CopyEdit
         VITE_API_URL=http://localhost:3000
         VITE_IK_URL_ENDPOINT=your-vite-ik-url-endpoint
         VITE_IK_PUBLIC_KEY=your-vite-ik-public-key 
@@ -155,11 +145,8 @@ Setting Up Environment Variables
 
     -   Create a `.env` file in the `backend` directory.
     -   Add your environment variables:
-
-        env
-
-        CopyEdit
         ```env
+        CopyEdit
         MONGO=your-mongo-url
         CLIENT_URL="http://localhost:5173"
         CLERK_WEBHOOK_SECRET=your-webhook-secret
@@ -179,8 +166,8 @@ Setting Up Environment Variables
 
         api_keys.yaml
 
-        CopyEdit
         ```env
+        CopyEdit
         openai:
             api_key: your-key
         weaviate:
@@ -200,7 +187,7 @@ Running the Project
 
 1.  Start the development server:
 
-    bash
+    ```bash
 
     CopyEdit
 
@@ -213,7 +200,7 @@ Running the Project
 
 1.  Start the FastAPI server:
 
-    bash
+    ```bash
 
     CopyEdit
 
@@ -226,13 +213,13 @@ Running the Project
 
 1.  Start the FastAPI server:
 
-    bash
+    ```bash
 
     CopyEdit
 
     `cd backend`
     `cd src`
-    `python -m uvicorn backend.main:app --reload`
+    `uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000`
 
 2.  API documentation will be available at:
 
@@ -248,7 +235,7 @@ Build and Deployment
 
 1.  Build for production:
 
-    bash
+    ```bash
 
     CopyEdit
 
@@ -261,8 +248,8 @@ Build and Deployment
 
 1.  Use a production-grade server like `gunicorn` or `uvicorn` with multiple workers:
 
-    bash
+    ```bash
 
     CopyEdit
 
-    `python -m uvicorn main:app --host 0.0.0.0 --port 8000`
+    `python -m backend.uvicorn main:app --host 0.0.0.0 --port 8000`
