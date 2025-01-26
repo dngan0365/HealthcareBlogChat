@@ -140,15 +140,15 @@ Setting Up Environment Variables
         env
 
         CopyEdit
-
-        `VITE_API_URL=http://localhost:3000`
-        `VITE_IK_URL_ENDPOINT=your-vite-ik-url-endpoint` 
-        `VITE_IK_PUBLIC_KEY=your-vite-ik-public-key` 
-        `VITE_IK_SECRET_KEY=your-vite-ik-secret-key` 
-        `VITE_CLERK_PUBLISHABLE_KEY=your-vite-clerk-publishable`
-        `VITE_API_URL=your-vite-api-url`
-        `VITE_GEMINI_PUBLIC_KEY=your-gemini-public`
-        `LICENSE_KEY_SYNCFUSION=your-license-key-syncfusion`
+        ```env
+        VITE_API_URL=http://localhost:3000
+        VITE_IK_URL_ENDPOINT=your-vite-ik-url-endpoint
+        VITE_IK_PUBLIC_KEY=your-vite-ik-public-key 
+        VITE_IK_SECRET_KEY=your-vite-ik-secret-key
+        VITE_CLERK_PUBLISHABLE_KEY=your-vite-clerk-publishable
+        VITE_API_URL=your-vite-api-url
+        VITE_GEMINI_PUBLIC_KEY=your-gemini-public
+        LICENSE_KEY_SYNCFUSION=your-license-key-syncfusion
     - For IK (support images): [ImageKit](https://imagekit.io/docs/api-overview)
     - For Syncfusion (support schedule): [Syncfusion](https://www.syncfusion.com/downloads)
 2.  **Backend**:
@@ -167,7 +167,7 @@ Setting Up Environment Variables
         CLERK_SECRET_KEY=your-clerk-secret-key
         IK_URL_ENDPOINT=your-ik-url-endpoint
         IK_PUBLIC_KEY=your-ik-public-key
-        IK_PRIVATE_KEY=your-ik-private-key `
+        IK_PRIVATE_KEY=your-ik-private-key 
     - Mongo for database: https://www.mongodb.com/?msockid=0047e0678f906e71157cf5648ef66f2d
     - Clerk for Authentication: https://clerk.com/
     - IK fro images: https://imagekit.io/docs/api-overview 
