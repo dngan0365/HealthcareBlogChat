@@ -15,6 +15,9 @@ Table of Contents
 -----------------
 
 -   [Features](#features)
+-   [Bot in Action](#bot-in-action)
+-   [System Architecture Overview](#system-architecture-overview)
+-   [Future Scope](#future-scope)
 -   [Tech Stack](#tech-stack)
 -   [Installation](#installation)
 -   [Setting Up Environment Variables](#setting-up-environment-variables)
@@ -76,6 +79,31 @@ System Architecture Overview
 ![](assets/image/system.png)
 > Chatbot System
 ![](assets/image/chatbot.png)
+
+* * * * *
+
+Future Scope
+----------
+-   **Optimized Prompt and Tool Descriptions**
+
+    -   Design more specific and effective prompts to enhance chatbot performance.
+    -   Refine descriptions of tools to ensure clarity and usability.
+-   **Admin Dashboard**
+
+    -   Develop a dedicated dashboard for administrators to manage users, content, and system settings efficiently.
+-   **Search for Missing Information**
+
+    -   Enable the chatbot to search the Internet for missing information or provide guidance when it lacks data to respond accurately.
+-   **Web Deployment**
+
+    -   Deploy the web application for public access on platforms like Vercel, Netlify, or a dedicated server.
+-   **Image and Voice Processing**
+
+    -   Add support for users to upload images for analysis or interpretation.
+    -   Implement voice interaction capabilities for queries and responses.
+-   **Schedule Database Management**
+
+    -   Introduce features for users to modify their schedules directly, such as deleting or updating entries in the database.
 * * * * *
 
 Installation
@@ -91,41 +119,28 @@ Installation
 
 1.  Clone the repository:
 
-    bash
-
-    CopyEdit
-
-    `git clone https://github.com/dngan0365/HealthcareBlogChat
-    cd HealthcareBlogChat`
+    ```bash
+    git clone https://github.com/dngan0365/HealthcareBlogChat
+    cd HealthcareBlogChat
 
 2.  Install dependencies:
 
     -   **Frontend**:
 
-        bash
-
-        CopyEdit
-
-        `cd client
-        npm install`
+        ```bash
+        cd client
+        npm install
 
     -   **Backend**:
 
-        bash
-
-        CopyEdit
-
-        `cd backend
-        npm install`
+        ```bash
+        cd backend
+        npm install
 
     -   **Chatbot Backend**:
-
-        bash
-
-        CopyEdit
-
-        `cd chatbot-backend
-        pip install -r requirements.txt`
+        ```bash
+        cd chatbot-backend
+        pip install -r requirements.txt
 
 * * * * *
 
@@ -136,29 +151,21 @@ Setting Up Environment Variables
 
     -   Create a `.env` file in the `client` directory.
     -   Add your environment variables:
-
-        env
-
-        CopyEdit
-
-        `VITE_API_URL=http://localhost:3000`
-        `VITE_IK_URL_ENDPOINT=your-vite-ik-url-endpoint` 
-        `VITE_IK_PUBLIC_KEY=your-vite-ik-public-key` 
-        `VITE_IK_SECRET_KEY=your-vite-ik-secret-key` 
-        `VITE_CLERK_PUBLISHABLE_KEY=your-vite-clerk-publishable`
-        `VITE_API_URL=your-vite-api-url`
-        `VITE_GEMINI_PUBLIC_KEY=your-gemini-public`
-        `LICENSE_KEY_SYNCFUSION=your-license-key-syncfusion`
+        ```env
+        VITE_API_URL=http://localhost:3000
+        VITE_IK_URL_ENDPOINT=your-vite-ik-url-endpoint
+        VITE_IK_PUBLIC_KEY=your-vite-ik-public-key 
+        VITE_IK_SECRET_KEY=your-vite-ik-secret-key
+        VITE_CLERK_PUBLISHABLE_KEY=your-vite-clerk-publishable
+        VITE_API_URL=your-vite-api-url
+        VITE_GEMINI_PUBLIC_KEY=your-gemini-public
+        LICENSE_KEY_SYNCFUSION=your-license-key-syncfusion
     - For IK (support images): [ImageKit](https://imagekit.io/docs/api-overview)
     - For Syncfusion (support schedule): [Syncfusion](https://www.syncfusion.com/downloads)
 2.  **Backend**:
 
     -   Create a `.env` file in the `backend` directory.
     -   Add your environment variables:
-
-        env
-
-        CopyEdit
         ```env
         MONGO=your-mongo-url
         CLIENT_URL="http://localhost:5173"
@@ -167,10 +174,10 @@ Setting Up Environment Variables
         CLERK_SECRET_KEY=your-clerk-secret-key
         IK_URL_ENDPOINT=your-ik-url-endpoint
         IK_PUBLIC_KEY=your-ik-public-key
-        IK_PRIVATE_KEY=your-ik-private-key `
-    - Mongo for database: https://www.mongodb.com/?msockid=0047e0678f906e71157cf5648ef66f2d
-    - Clerk for Authentication: https://clerk.com/
-    - IK fro images: https://imagekit.io/docs/api-overview 
+        IK_PRIVATE_KEY=your-ik-private-key 
+    - Mongo for database: [Mongo](https://www.mongodb.com/?msockid=0047e0678f906e71157cf5648ef66f2d)
+    - Clerk for Authentication: [Cleark](https://clerk.com/)
+    - IK fro images: [ImageKit](https://imagekit.io/docs/api-overview) 
 
 3.  **Chatbot Backend**:
 
@@ -179,15 +186,14 @@ Setting Up Environment Variables
 
         api_keys.yaml
 
-        CopyEdit
-
-        `openai:`
-            `api_key: your-key`
-        `weaviate:`
-        `    url: your-weaviate-url`
-        `    api_key: your-weaviate-api-key`
-        `mongodb:`
-        `    url: your-mongo-url`
+        ```env
+        openai:
+            api_key: your-key
+        weaviate:
+            url: your-weaviate-url
+            api_key: your-weaviate-api-key
+        mongodb:
+            url: your-mongo-url
 
 4.  Ensure the `api_keys.yaml` files are listed in `.gitignore` to prevent them from being pushed to the repository.
 
@@ -200,12 +206,9 @@ Running the Project
 
 1.  Start the development server:
 
-    bash
-
-    CopyEdit
-
-    `cd client`
-    `npm run dev`
+    ```bash
+    cd client
+    npm run dev
 
 2.  Open your browser and visit: http://localhost:5173
 
@@ -213,12 +216,9 @@ Running the Project
 
 1.  Start the FastAPI server:
 
-    bash
-
-    CopyEdit
-
-    `cd backend`
-    `npm start`
+    ```bash
+    cd backend
+    npm start
 
 2.  Open your browser and visit: http://localhost:3000
 
@@ -226,13 +226,10 @@ Running the Project
 
 1.  Start the FastAPI server:
 
-    bash
-
-    CopyEdit
-
-    `cd backend`
-    `cd src`
-    `python -m uvicorn backend.main:app --reload`
+    ```bash
+    cd backend
+    cd src
+    uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 
 2.  API documentation will be available at:
 
@@ -248,12 +245,9 @@ Build and Deployment
 
 1.  Build for production:
 
-    bash
-
-    CopyEdit
-
-    `cd frontend`
-    `npm run build`
+    ```bash
+    cd frontend
+    npm run build
 
 2.  The production-ready files will be in the `dist` folder.
 
@@ -261,8 +255,6 @@ Build and Deployment
 
 1.  Use a production-grade server like `gunicorn` or `uvicorn` with multiple workers:
 
-    bash
+    ```bash
 
-    CopyEdit
-
-    `python -m uvicorn main:app --host 0.0.0.0 --port 8000`
+    python -m backend.uvicorn main:app --host 0.0.0.0 --port 8000
