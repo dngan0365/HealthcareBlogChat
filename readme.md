@@ -218,7 +218,7 @@ Running the Project
 
     ```bash
     cd backend
-    npm start
+    node --env-file .env --watch index.js
 
 2.  Open your browser and visit: http://localhost:3000
 
